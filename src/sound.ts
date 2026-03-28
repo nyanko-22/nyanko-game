@@ -7,7 +7,13 @@ const MEOW_FILES = [
   'sounds/meow6.mp3',
 ];
 
+const GAMEOVER_FILES = [
+  'sounds/gameover1.mp3',
+  'sounds/gameover2.mp3',
+];
+
 const buffers: (AudioBuffer | null)[] = MEOW_FILES.map(() => null);
+const gameoverBuffers: (AudioBuffer | null)[] = GAMEOVER_FILES.map(() => null);
 let loaded = false;
 
 function getAudioContext(): AudioContext {
@@ -23,13 +29,18 @@ async function loadSounds(): Promise<void> {
 
   const ctx = getAudioContext();
 
+  const allFiles = [
+    ...MEOW_FILES.map((file, i) => ({ file, arr: buffers, i })),
+    ...GAMEOVER_FILES.map((file, i) => ({ file, arr: gameoverBuffers, i })),
+  ];
+
   await Promise.all(
-    MEOW_FILES.map(async (file, i) => {
+    allFiles.map(async ({ file, arr, i }) => {
       try {
         const res = await fetch(`${import.meta.env.BASE_URL}${file}`);
         if (!res.ok) return;
         const data = await res.arrayBuffer();
-        buffers[i] = await ctx.decodeAudioData(data);
+        arr[i] = await ctx.decodeAudioData(data);
       } catch {
         // Sound loading failed silently - game continues without sound
       }
@@ -65,6 +76,27 @@ export function playMeow(level: number): void {
 
   const gain = ctx.createGain();
   gain.gain.value = 0.5;
+
+  source.connect(gain);
+  gain.connect(ctx.destination);
+  source.start();
+}
+
+export function playGameOver(): void {
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume();
+  }
+
+  const index = Math.floor(Math.random() * GAMEOVER_FILES.length);
+  const buffer = gameoverBuffers[index];
+  if (!buffer) return;
+
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+
+  const gain = ctx.createGain();
+  gain.gain.value = 0.6;
 
   source.connect(gain);
   gain.connect(ctx.destination);

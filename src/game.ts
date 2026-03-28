@@ -4,7 +4,7 @@ import { initPhysics, stepPhysics, addBody, getAllBodies, onMerge, clearCats, ty
 import { initInput, consumeDrop, getCursorX } from './input';
 import { createCanvas, render } from './renderer';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
-import { playMeow, ensureAudioReady } from './sound';
+import { playMeow, playGameOver, ensureAudioReady } from './sound';
 
 export interface Particle {
   x: number;
@@ -141,6 +141,7 @@ function gameLoop(timestamp: number): void {
       if ((plugin.graceFrames as number) > DEATH_GRACE_FRAMES) {
         state = 'gameover';
         saveHighScore();
+        playGameOver();
         break;
       }
     } else {
