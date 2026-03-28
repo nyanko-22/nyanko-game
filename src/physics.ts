@@ -6,6 +6,7 @@ import {
 import { createCat } from './cats';
 
 export interface MergeEvent {
+  fromLevel: number;
   newLevel: number;
   x: number;
   y: number;
@@ -90,7 +91,7 @@ export function initPhysics(): void {
       Matter.Composite.add(world, newCat);
 
       if (mergeCallback) {
-        mergeCallback({ newLevel, x: midX, y: midY });
+        mergeCallback({ fromLevel: merge.level, newLevel, x: midX, y: midY });
       }
     }
   });

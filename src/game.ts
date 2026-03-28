@@ -75,7 +75,7 @@ function handleMerge(event: MergeEvent): void {
   spawnParticles(event.x, event.y, cat.color);
   shakeOffset = 3 + event.newLevel * 0.5;
   shakeDecay = 0.85;
-  playMeow(event.newLevel);
+  playMeow(event.fromLevel, event.newLevel);
 }
 
 function startGame(): void {
