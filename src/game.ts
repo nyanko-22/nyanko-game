@@ -4,7 +4,7 @@ import { initPhysics, stepPhysics, addBody, getAllBodies, onMerge, clearCats, ty
 import { initInput, consumeDrop, getCursorX } from './input';
 import { createCanvas, render } from './renderer';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
-import { playMeow } from './sound';
+import { playMeow, ensureAudioReady } from './sound';
 
 export interface Particle {
   x: number;
@@ -79,6 +79,7 @@ function handleMerge(event: MergeEvent): void {
 }
 
 function startGame(): void {
+  ensureAudioReady();
   state = 'playing';
   resetScore();
   clearCats();

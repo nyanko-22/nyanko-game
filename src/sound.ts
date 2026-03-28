@@ -1,56 +1,91 @@
 let audioCtx: AudioContext | null = null;
+let resumed = false;
 
 function getAudioContext(): AudioContext {
   if (!audioCtx) {
     audioCtx = new AudioContext();
   }
+  if (!resumed && audioCtx.state === 'suspended') {
+    audioCtx.resume().then(() => { resumed = true; });
+  }
   return audioCtx;
+}
+
+export function ensureAudioReady(): void {
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') {
+    ctx.resume().then(() => { resumed = true; });
+  }
 }
 
 export function playMeow(level: number): void {
   const ctx = getAudioContext();
-  if (ctx.state === 'suspended') {
-    ctx.resume();
-  }
 
   const now = ctx.currentTime;
-  const duration = 0.15 + level * 0.02;
+  const duration = 0.25 + level * 0.03;
 
-  // Lower pitch for larger cats
-  const baseFreq = 800 - level * 50;
+  // Lower pitch for larger cats, range: 700Hz (kitten) → 200Hz (cat god)
+  const baseFreq = 700 - level * 45;
 
-  // Oscillator for the meow tone
-  const osc = ctx.createOscillator();
-  osc.type = 'sine';
-  osc.frequency.setValueAtTime(baseFreq, now);
-  osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.6, now + duration * 0.7);
-  osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.4, now + duration);
+  // Main "meow" tone - frequency sweep mimics a meow
+  const osc1 = ctx.createOscillator();
+  osc1.type = 'sine';
+  // Rise then fall: "me-ow" contour
+  osc1.frequency.setValueAtTime(baseFreq * 0.7, now);
+  osc1.frequency.linearRampToValueAtTime(baseFreq, now + duration * 0.3);
+  osc1.frequency.linearRampToValueAtTime(baseFreq * 0.5, now + duration);
 
-  // Second harmonic for richer sound
+  // Nasal harmonic for cat-like timbre
   const osc2 = ctx.createOscillator();
-  osc2.type = 'triangle';
-  osc2.frequency.setValueAtTime(baseFreq * 1.5, now);
-  osc2.frequency.exponentialRampToValueAtTime(baseFreq * 0.9, now + duration);
+  osc2.type = 'sawtooth';
+  osc2.frequency.setValueAtTime(baseFreq * 1.5 * 0.7, now);
+  osc2.frequency.linearRampToValueAtTime(baseFreq * 1.5, now + duration * 0.3);
+  osc2.frequency.linearRampToValueAtTime(baseFreq * 1.5 * 0.5, now + duration);
 
-  // Volume envelope
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0, now);
-  gain.gain.linearRampToValueAtTime(0.15 + level * 0.01, now + 0.02);
-  gain.gain.linearRampToValueAtTime(0.1, now + duration * 0.5);
-  gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+  // Third harmonic
+  const osc3 = ctx.createOscillator();
+  osc3.type = 'sine';
+  osc3.frequency.setValueAtTime(baseFreq * 2 * 0.7, now);
+  osc3.frequency.linearRampToValueAtTime(baseFreq * 2, now + duration * 0.3);
+  osc3.frequency.linearRampToValueAtTime(baseFreq * 2 * 0.5, now + duration);
 
-  const gain2 = ctx.createGain();
-  gain2.gain.setValueAtTime(0, now);
-  gain2.gain.linearRampToValueAtTime(0.06, now + 0.02);
-  gain2.gain.exponentialRampToValueAtTime(0.001, now + duration);
+  // Bandpass filter for nasal quality
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(baseFreq * 1.2, now);
+  filter.frequency.linearRampToValueAtTime(baseFreq * 0.8, now + duration);
+  filter.Q.value = 5;
 
-  osc.connect(gain);
-  osc2.connect(gain2);
-  gain.connect(ctx.destination);
-  gain2.connect(ctx.destination);
+  // Volume envelope: quick attack, sustain, fade out
+  const mainGain = ctx.createGain();
+  mainGain.gain.setValueAtTime(0, now);
+  mainGain.gain.linearRampToValueAtTime(0.4, now + 0.03);
+  mainGain.gain.setValueAtTime(0.35, now + duration * 0.3);
+  mainGain.gain.linearRampToValueAtTime(0.0001, now + duration);
 
-  osc.start(now);
+  const harmonicGain = ctx.createGain();
+  harmonicGain.gain.setValueAtTime(0, now);
+  harmonicGain.gain.linearRampToValueAtTime(0.08, now + 0.03);
+  harmonicGain.gain.linearRampToValueAtTime(0.0001, now + duration * 0.7);
+
+  const thirdGain = ctx.createGain();
+  thirdGain.gain.setValueAtTime(0, now);
+  thirdGain.gain.linearRampToValueAtTime(0.04, now + 0.03);
+  thirdGain.gain.linearRampToValueAtTime(0.0001, now + duration * 0.5);
+
+  // Connect: oscillators → gains → filter → output
+  osc1.connect(mainGain);
+  osc2.connect(harmonicGain);
+  osc3.connect(thirdGain);
+  mainGain.connect(filter);
+  harmonicGain.connect(filter);
+  thirdGain.connect(filter);
+  filter.connect(ctx.destination);
+
+  osc1.start(now);
   osc2.start(now);
-  osc.stop(now + duration);
-  osc2.stop(now + duration);
+  osc3.start(now);
+  osc1.stop(now + duration + 0.05);
+  osc2.stop(now + duration + 0.05);
+  osc3.stop(now + duration + 0.05);
 }
