@@ -68,6 +68,7 @@
   /* Background pattern */
   --bg-pattern-opacity: 0.06;
   --bg-pattern-size: 160px 160px;
+  --bg-radial-overlay: none;
 }
 
 /* ===== Dark Theme ===== */
@@ -139,4 +140,5 @@
   /* Background pattern */
   --bg-pattern-opacity: 0.08;
   --bg-pattern-size: 320px 320px;
+  --bg-radial-overlay: radial-gradient(ellipse 75% 55% at 50% 58%, rgba(35, 45, 90, 0.6) 0%, transparent 70%);
 }

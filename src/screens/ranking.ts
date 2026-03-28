@@ -165,7 +165,8 @@ function ensureModal(): void {
   modalEl.addEventListener('click', () => {
     if (modalEl) modalEl.style.display = 'none';
   });
-  document.getElementById('overlay-container')!.appendChild(modalEl);
+  // Mount directly on body to avoid stacking context and pointer-events inheritance issues
+  document.body.appendChild(modalEl);
 }
 
 function showScreenshotModal(url: string): void {
@@ -175,9 +176,15 @@ function showScreenshotModal(url: string): void {
   modalEl.style.display = 'flex';
 
   const img = new Image();
-  img.crossOrigin = 'anonymous';
+  // Do NOT set crossOrigin='anonymous' — causes CORS block with Firebase Storage
   img.className = 'screenshot-modal-img';
   img.src = url;
+  img.onerror = () => {
+    const msg = el('p', { className: 'text-body text-muted' });
+    msg.textContent = '画像の読み込みに失敗しました';
+    if (modalEl) modalEl.insertBefore(msg, img);
+    img.style.display = 'none';
+  };
 
   const hint = el('p', { className: 'screenshot-modal-hint text-label text-muted' });
   hint.textContent = 'タップして閉じる';

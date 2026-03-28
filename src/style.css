@@ -24,8 +24,8 @@ html, body {
   justify-content: center;
   align-items: center;
   position: relative;
-  background-image: var(--bg-pattern-url);
-  background-size: var(--bg-pattern-size, 160px 160px);
+  background-image: var(--bg-pattern-url, none), var(--bg-radial-overlay, none);
+  background-size: var(--bg-pattern-size, 160px 160px), 100% 100%;
   background-repeat: repeat;
   background-position: center;
 }
@@ -100,6 +100,19 @@ html, body {
   border: 1px solid var(--glass-border);
   border-radius: 16px;
   box-shadow: 0 8px 32px 0 var(--glass-shadow);
+}
+
+/* ===== Dark Cosmic Glow Effects ===== */
+[data-theme="dark"] .btn-primary {
+  box-shadow: 0 0 12px rgba(129, 212, 250, 0.25), 0 0 28px rgba(129, 212, 250, 0.08);
+}
+
+[data-theme="dark"] .nyanmorphic {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(129, 212, 250, 0.08);
+}
+
+[data-theme="dark"] .ranking-your-stats {
+  box-shadow: 0 0 16px rgba(129, 212, 250, 0.15), 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 /* ===== Typography ===== */
@@ -741,7 +754,7 @@ html, body {
   align-items: center;
   justify-content: center;
   gap: 16px;
-  z-index: 20;
+  z-index: 9999;
   padding: 20px;
   cursor: pointer;
 }
