@@ -3,7 +3,6 @@ let audioCtx: AudioContext | null = null;
 const MEOW_FILES = [
   'sounds/meow1.mp3',
   'sounds/meow2.mp3',
-  'sounds/meow4.mp3',
   'sounds/meow5.mp3',
   'sounds/meow6.mp3',
 ];
