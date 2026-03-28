@@ -291,7 +291,6 @@ export function render(
     // Preview of current cat at drop position
     const previewCat = CATS[currentLevel];
     ctx.save();
-    ctx.globalAlpha = 0.5;
     ctx.translate(cursorX, DROP_Y);
     drawCatFace(ctx, currentLevel, previewCat.radius);
     ctx.restore();
