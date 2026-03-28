@@ -1,13 +1,18 @@
-import { CATS, DROP_Y, DROP_COOLDOWN_MS, MAX_DROP_LEVEL, DEATH_LINE_Y, DEATH_GRACE_FRAMES, GAME_WIDTH, GAME_HEIGHT, SCREENSHOT_QUALITY } from './constants';
+import { CATS, DROP_Y, DROP_COOLDOWN_MS, MAX_DROP_LEVEL, DEATH_LINE_Y, DEATH_GRACE_FRAMES, SCREENSHOT_QUALITY } from './constants';
 import { createCat } from './cats';
 import { initPhysics, stepPhysics, addBody, getAllBodies, onMerge, clearCats, type MergeEvent } from './physics';
-import { initInput, consumeDrop, getCursorX, suppressDrop } from './input';
-import { createCanvas, render, SETTINGS_BUTTON, SETTINGS_LAYOUT, NICKNAME_LAYOUT, RANKING_LAYOUT, TITLE_LAYOUT, type GameState, type RankingRenderData } from './renderer';
+import { initInput, consumeDrop, getCursorX } from './input';
+import { createCanvas, render, type GameState } from './renderer';
+import { showSettingsScreen, hideSettingsScreen } from './screens/settings';
+import { showHomeScreen, hideHomeScreen } from './screens/home';
+import { showRankingScreen, hideRankingScreen, updateRankingScreen } from './screens/ranking';
+import { showGameOverScreen, hideGameOverScreen } from './screens/gameover';
+import { showNicknameScreen, hideNicknameScreen, getLastNickname } from './screens/nickname';
+import { initHud, updateHud, showHud, hideHud } from './screens/hud';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
-import { playMeow, playGameOver, ensureAudioReady, startBgm, stopBgm, getBgmVolume, getSeVolume, setBgmVolume, setSeVolume } from './sound';
+import { playMeow, playGameOver, ensureAudioReady, startBgm, stopBgm } from './sound';
 import { submitScore } from './firebase';
-import { showNicknameInput, hideNicknameInput, triggerSubmit } from './nickname';
-import { loadRanking, getRankingData, scrollRanking, selectScreenshot, closeScreenshot, resetRanking } from './ranking';
+import { loadRanking, getRankingData, resetRanking } from './ranking';
 
 export interface Particle {
   x: number;
@@ -30,7 +35,6 @@ let ctx: CanvasRenderingContext2D;
 let shakeOffset = 0;
 let shakeDecay = 0;
 let settingsOpen = false;
-let draggingSlider: 'bgm' | 'se' | null = null;
 let gameOverScreenshotBlob: Blob | null = null;
 let submitting = false;
 
@@ -93,50 +97,47 @@ function startGame(): void {
   nextLevel = pickLevel();
   lastDropTime = 0;
   startBgm();
+  showHud();
+  updateHud(0, getHighScore(), nextLevel);
 }
 
-// Convert canvas client coordinates to game coordinates
-function canvasToGame(clientX: number, clientY: number): { x: number; y: number } {
-  const rect = canvas.getBoundingClientRect();
-  return {
-    x: ((clientX - rect.left) / rect.width) * GAME_WIDTH,
-    y: ((clientY - rect.top) / rect.height) * GAME_HEIGHT,
-  };
+
+function openHomeScreen(): void {
+  showHomeScreen({
+    onStart: () => {
+      hideHomeScreen();
+      startGame();
+    },
+    onRanking: () => {
+      hideHomeScreen();
+      goToRankingFromTitle();
+    },
+    onSettings: () => openSettings(),
+  });
 }
 
-function isInSettingsButton(gx: number, gy: number): boolean {
-  const dx = gx - SETTINGS_BUTTON.x;
-  const dy = gy - SETTINGS_BUTTON.y;
-  return dx * dx + dy * dy <= SETTINGS_BUTTON.radius * SETTINGS_BUTTON.radius;
-}
-
-function isInCloseButton(gx: number, gy: number): boolean {
-  const { closeX, closeY, closeSize } = SETTINGS_LAYOUT;
-  return gx >= closeX && gx <= closeX + closeSize && gy >= closeY && gy <= closeY + closeSize;
-}
-
-function hitSlider(gx: number, gy: number): 'bgm' | 'se' | null {
-  const { sliderX, sliderW, bgmSliderY, seSliderY, sliderH } = SETTINGS_LAYOUT;
-  const margin = 14;
-  if (gx >= sliderX - margin && gx <= sliderX + sliderW + margin) {
-    if (gy >= bgmSliderY - margin && gy <= bgmSliderY + sliderH + margin) return 'bgm';
-    if (gy >= seSliderY - margin && gy <= seSliderY + sliderH + margin) return 'se';
-  }
-  return null;
-}
-
-function hitButton(gx: number, gy: number, btnY: number): boolean {
-  const { btnX, btnW, btnH } = SETTINGS_LAYOUT;
-  return gx >= btnX && gx <= btnX + btnW && gy >= btnY && gy <= btnY + btnH;
+export function openSettings(): void {
+  settingsOpen = true;
+  showSettingsScreen({
+    onClose: () => {
+      settingsOpen = false;
+      hideSettingsScreen();
+    },
+    onRestart: () => {
+      settingsOpen = false;
+      hideSettingsScreen();
+      stopBgm();
+      startGame();
+    },
+    onScreenshot: () => {
+      takeScreenshot();
+    },
+  });
 }
 
 function takeScreenshot(): void {
-  // Re-render without settings panel for clean screenshot
-  const wasOpen = settingsOpen;
-  settingsOpen = false;
   const bodies = getAllBodies();
-  render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, false, getBgmVolume(), getSeVolume());
-  settingsOpen = wasOpen;
+  render(ctx, bodies, state, getCursorX(), currentLevel, particles);
 
   canvas.toBlob((blob) => {
     if (!blob) return;
@@ -149,20 +150,10 @@ function takeScreenshot(): void {
   }, 'image/png');
 }
 
-function updateSliderValue(gx: number): void {
-  const { sliderX, sliderW } = SETTINGS_LAYOUT;
-  const value = Math.max(0, Math.min(1, (gx - sliderX) / sliderW));
-  if (draggingSlider === 'bgm') {
-    setBgmVolume(value);
-  } else if (draggingSlider === 'se') {
-    setSeVolume(value);
-  }
-}
 
 function captureGameOverScreenshot(): void {
-  // Render clean frame for screenshot
   const bodies = getAllBodies();
-  render(ctx, bodies, 'gameover', getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, false, getBgmVolume(), getSeVolume());
+  render(ctx, bodies, 'gameover', getCursorX(), currentLevel, particles);
   canvas.toBlob((blob) => {
     gameOverScreenshotBlob = blob;
   }, 'image/jpeg', SCREENSHOT_QUALITY);
@@ -171,15 +162,17 @@ function captureGameOverScreenshot(): void {
 function goToNickname(): void {
   state = 'nickname';
   submitting = false;
-  showNicknameInput(canvas, (nickname) => {
-    handleNicknameSubmit(nickname);
+  showNicknameScreen(getLastNickname(), {
+    onSubmit: (nickname) => {
+      hideNicknameScreen();
+      handleNicknameSubmit(nickname);
+    },
   });
 }
 
 async function handleNicknameSubmit(nickname: string): Promise<void> {
   if (submitting) return;
   submitting = true;
-  hideNicknameInput();
 
   try {
     if (gameOverScreenshotBlob) {
@@ -194,241 +187,58 @@ async function handleNicknameSubmit(nickname: string): Promise<void> {
   state = 'ranking';
   resetRanking();
   loadRanking();
+  showRankingScreen(getRankingData(), {
+    onBack: () => {
+      hideRankingScreen();
+      state = 'title';
+      openHomeScreen();
+    },
+    onPlayAgain: () => {
+      hideRankingScreen();
+      startGame();
+    },
+  });
 }
 
 function goToRankingFromTitle(): void {
   state = 'ranking';
   resetRanking();
   loadRanking();
-}
-
-function setupRankingInput(): void {
-  const handleDown = (clientX: number, clientY: number): boolean => {
-    const { x: gx, y: gy } = canvasToGame(clientX, clientY);
-
-    if (state === 'nickname') {
-      const btn = NICKNAME_LAYOUT.submitBtn;
-      if (gx >= btn.x && gx <= btn.x + btn.w && gy >= btn.y && gy <= btn.y + btn.h) {
-        triggerSubmit();
-        return true;
-      }
-      return false;
-    }
-
-    if (state === 'ranking') {
-      const rd = getRankingData();
-
-      // Screenshot modal open - close on tap
-      if (rd.selectedScreenshot) {
-        closeScreenshot();
-        return true;
-      }
-
-      // Back button
-      const back = RANKING_LAYOUT.backBtn;
-      if (gx >= back.x && gx <= back.x + back.w && gy >= back.y && gy <= back.y + back.h) {
-        state = 'title';
-        return true;
-      }
-
-      // Play again button
-      const play = RANKING_LAYOUT.playBtn;
-      if (gx >= play.x && gx <= play.x + play.w && gy >= play.y && gy <= play.y + play.h) {
-        startGame();
-        return true;
-      }
-
-      // Tap on ranking row to view screenshot
-      if (gy >= RANKING_LAYOUT.listY && gy < RANKING_LAYOUT.listY + RANKING_LAYOUT.listH) {
-        const rowIndex = Math.floor((gy - RANKING_LAYOUT.listY + rd.scrollOffset) / RANKING_LAYOUT.rowH);
-        if (rowIndex >= 0 && rowIndex < rd.scores.length) {
-          selectScreenshot(rd.scores[rowIndex].screenshotUrl);
-          return true;
-        }
-      }
-
-      return true;
-    }
-
-    if (state === 'title') {
-      const rbtn = TITLE_LAYOUT.rankingBtn;
-      if (gx >= rbtn.x && gx <= rbtn.x + rbtn.w && gy >= rbtn.y && gy <= rbtn.y + rbtn.h) {
-        goToRankingFromTitle();
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  canvas.addEventListener('mousedown', (e) => {
-    if (handleDown(e.clientX, e.clientY)) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-  }, true);
-
-  canvas.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    if (handleDown(touch.clientX, touch.clientY)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  }, { capture: true, passive: false });
-
-  // Scroll handling for ranking
-  canvas.addEventListener('wheel', (e) => {
-    if (state === 'ranking' && !getRankingData().selectedScreenshot) {
-      scrollRanking(e.deltaY);
-      e.preventDefault();
-    }
-  }, { passive: false });
-
-  // Touch scroll for ranking
-  let touchStartY = 0;
-  canvas.addEventListener('touchstart', (e) => {
-    if (state === 'ranking') {
-      touchStartY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  canvas.addEventListener('touchmove', (e) => {
-    if (state === 'ranking' && !getRankingData().selectedScreenshot) {
-      const touchY = e.touches[0].clientY;
-      const rect = canvas.getBoundingClientRect();
-      const delta = (touchStartY - touchY) / rect.height * GAME_HEIGHT;
-      scrollRanking(delta);
-      touchStartY = touchY;
-      e.preventDefault();
-    }
-  }, { passive: false });
-}
-
-function setupSettingsInput(): void {
-  const handleDown = (clientX: number, clientY: number) => {
-    const { x: gx, y: gy } = canvasToGame(clientX, clientY);
-
-    if (settingsOpen) {
-      // Close button
-      if (isInCloseButton(gx, gy)) {
-        settingsOpen = false;
-        return true;
-      }
-      // Restart button
-      if (hitButton(gx, gy, SETTINGS_LAYOUT.restartBtnY)) {
-        settingsOpen = false;
-        stopBgm();
-        startGame();
-        return true;
-      }
-      // Screenshot button
-      if (hitButton(gx, gy, SETTINGS_LAYOUT.screenshotBtnY)) {
-        takeScreenshot();
-        return true;
-      }
-      // Slider drag start
-      const slider = hitSlider(gx, gy);
-      if (slider) {
-        draggingSlider = slider;
-        updateSliderValue(gx);
-        return true;
-      }
-      // Click outside panel closes it
-      const { panelX, panelY, panelW, panelH } = SETTINGS_LAYOUT;
-      if (gx < panelX || gx > panelX + panelW || gy < panelY || gy > panelY + panelH) {
-        settingsOpen = false;
-        return true;
-      }
-      return true; // Consume all clicks when settings open
-    }
-
-    // Settings button
-    if (isInSettingsButton(gx, gy)) {
-      settingsOpen = true;
-      return true;
-    }
-    return false;
-  };
-
-  const handleMove = (clientX: number, _clientY: number) => {
-    if (draggingSlider) {
-      const { x: gx } = canvasToGame(clientX, _clientY);
-      updateSliderValue(gx);
-    }
-  };
-
-  const handleUp = () => {
-    draggingSlider = null;
-  };
-
-  canvas.addEventListener('mousedown', (e) => {
-    if (handleDown(e.clientX, e.clientY)) {
-      e.stopPropagation();
-      suppressDrop();
-    }
-  }, true);
-
-  canvas.addEventListener('mousemove', (e) => {
-    handleMove(e.clientX, e.clientY);
+  showRankingScreen(getRankingData(), {
+    onBack: () => {
+      hideRankingScreen();
+      state = 'title';
+      openHomeScreen();
+    },
+    onPlayAgain: () => {
+      hideRankingScreen();
+      startGame();
+    },
   });
-
-  canvas.addEventListener('mouseup', handleUp);
-
-  canvas.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    if (handleDown(touch.clientX, touch.clientY)) {
-      e.preventDefault();
-      e.stopPropagation();
-      suppressDrop();
-    }
-  }, { capture: true, passive: false });
-
-  canvas.addEventListener('touchmove', (e) => {
-    if (draggingSlider) {
-      e.preventDefault();
-      const touch = e.touches[0];
-      handleMove(touch.clientX, touch.clientY);
-    }
-  }, { passive: false });
-
-  canvas.addEventListener('touchend', handleUp);
 }
+
+
 
 function gameLoop(timestamp: number): void {
   requestAnimationFrame(gameLoop);
 
-  const bgmVol = getBgmVolume();
-  const seVol = getSeVolume();
-
   if (state === 'title') {
-    if (!settingsOpen && consumeDrop()) {
-      startGame();
-      return;
-    }
-    const bodies = getAllBodies();
-    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, settingsOpen, bgmVol, seVol);
+    render(ctx, getAllBodies(), state, getCursorX(), currentLevel, particles);
     return;
   }
 
   if (state === 'gameover') {
-    if (!settingsOpen && consumeDrop()) {
-      goToNickname();
-      return;
-    }
-    const bodies = getAllBodies();
-    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, settingsOpen, bgmVol, seVol);
+    render(ctx, getAllBodies(), state, getCursorX(), currentLevel, particles);
     return;
   }
 
   if (state === 'nickname') {
-    const rd: RankingRenderData = { ...getRankingData(), submitting };
-    render(ctx, getAllBodies(), state, 0, 0, 0, getScore(), getHighScore(), [], false, bgmVol, seVol, rd);
+    render(ctx, getAllBodies(), state, 0, 0, []);
     return;
   }
 
   if (state === 'ranking') {
-    const rd: RankingRenderData = { ...getRankingData(), submitting: false };
-    render(ctx, getAllBodies(), state, 0, 0, 0, getScore(), getHighScore(), [], false, bgmVol, seVol, rd);
+    updateRankingScreen(getRankingData());
     return;
   }
 
@@ -467,8 +277,16 @@ function gameLoop(timestamp: number): void {
         saveHighScore();
         playGameOver();
         stopBgm();
-        // Capture screenshot for ranking
+        hideHud();
         captureGameOverScreenshot();
+        const finalScore = getScore();
+        const isNewBest = finalScore >= getHighScore() && finalScore > 0;
+        showGameOverScreen(finalScore, isNewBest, {
+          onSubmit: () => {
+            hideGameOverScreen();
+            goToNickname();
+          },
+        });
         break;
       }
     } else {
@@ -487,7 +305,8 @@ function gameLoop(timestamp: number): void {
     shakeOffset *= shakeDecay;
   }
 
-  render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, settingsOpen, bgmVol, seVol);
+  updateHud(getScore(), getHighScore(), nextLevel);
+  render(ctx, bodies, 'playing', getCursorX(), currentLevel, particles);
 
   if (shakeOffset > 0.1) {
     ctx.restore();
@@ -496,16 +315,16 @@ function gameLoop(timestamp: number): void {
 
 export function initGame(): void {
   canvas = createCanvas();
-  const app = document.getElementById('app')!;
-  app.appendChild(canvas);
+  const wrapper = document.getElementById('game-wrapper')!;
+  wrapper.appendChild(canvas);
 
   ctx = canvas.getContext('2d')!;
 
   initPhysics();
   onMerge(handleMerge);
   initInput(canvas, () => CATS[currentLevel].radius);
-  setupSettingsInput();
-  setupRankingInput();
+  initHud({ onSettings: openSettings });
+  openHomeScreen();
 
   requestAnimationFrame(gameLoop);
 }

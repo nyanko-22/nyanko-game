@@ -1,3 +1,5 @@
+@import './theme.css';
+
 * {
   margin: 0;
   padding: 0;
@@ -8,33 +10,808 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #0f0f23;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: var(--color-background);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  color: var(--color-on-surface);
+  transition: background-color 0.3s ease;
 }
 
+/* ===== App Layout ===== */
 #app {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  background-image: var(--bg-pattern-url);
+  background-size: 160px 160px;
+  background-repeat: repeat;
+  background-position: center;
 }
 
+#game-wrapper {
+  position: relative;
+  max-width: 100vw;
+  max-height: 100vh;
+  aspect-ratio: 360 / 640;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#overlay-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#hud-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== Screen Overlays ===== */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: auto;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.screen--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Constrain screen content to game dimensions */
+.screen-inner {
+  width: 100%;
+  max-width: 360px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 0 16px;
+}
+
+/* ===== Glassmorphism ===== */
+.nyanmorphic {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 var(--glass-shadow);
+}
+
+/* ===== Typography ===== */
+.font-headline {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+
+.text-display {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+.text-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.text-body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+.text-label {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+/* ===== Material Icons ===== */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 9999px;
+  padding: 12px 28px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: 0 4px 12px rgba(0, 103, 134, 0.25);
+}
+
+[data-theme="dark"] .btn-primary {
+  box-shadow: 0 4px 12px rgba(129, 212, 250, 0.15);
+}
+
+.btn-secondary {
+  background: var(--color-surface-container);
+  color: var(--color-on-surface);
+  border: 1px solid var(--color-outline-variant);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-on-surface-variant);
+  padding: 8px 16px;
+}
+
+.btn-danger {
+  background: var(--color-error);
+  color: var(--color-on-error);
+}
+
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  color: var(--color-on-surface);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn-icon:active {
+  transform: scale(0.9);
+}
+
+/* ===== Toggle Switch ===== */
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--color-outline-variant);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.toggle input:checked + .toggle-track {
+  background: var(--color-primary);
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked ~ .toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* ===== Settings Row ===== */
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-row-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+
+/* ===== Theme Card ===== */
+.theme-card {
+  position: relative;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.theme-card--active {
+  border-color: var(--color-primary);
+}
+
+.theme-card-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Header Bar ===== */
+.header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  width: 100%;
+}
+
+.header-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* ===== Ranking List ===== */
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: var(--color-surface-container-low);
+  transition: background-color 0.15s ease;
+}
+
+.ranking-item:nth-child(odd) {
+  background: var(--color-surface-container);
+}
+
+.ranking-item--top {
+  background: linear-gradient(135deg, var(--color-secondary-container), var(--color-primary-container));
+}
+
+[data-theme="dark"] .ranking-item--top {
+  background: linear-gradient(135deg, var(--color-secondary-container), var(--color-primary-container));
+}
+
+.ranking-rank {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.ranking-rank--gold {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ranking-score {
+  margin-left: auto;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.ranking-pts {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--color-on-surface-variant);
+  margin-left: 4px;
+}
+
+/* ===== Bottom Navigation ===== */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 12px 0;
+  width: 100%;
+  margin-top: auto;
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 16px;
+  border: none;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-item--active {
+  color: var(--color-primary);
+}
+
+/* ===== Nickname Input ===== */
 .nickname-input {
   position: fixed;
   z-index: 100;
-  background: #16213e;
-  color: #FFFFFF;
-  border: 2px solid #FFD700;
-  border-radius: 8px;
-  padding: 4px 12px;
+  background: var(--color-surface-container);
+  color: var(--color-on-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: 12px;
+  padding: 8px 16px;
   text-align: center;
   outline: none;
-  font-family: sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 16px;
+  width: 240px;
 }
 
 .nickname-input::placeholder {
-  color: #888;
+  color: var(--color-outline);
+}
+
+/* ===== Badge ===== */
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-primary {
+  background: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+/* ===== Section Title ===== */
+.section-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-on-surface-variant);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 20px 0 12px;
+}
+
+/* ===== Home Screen ===== */
+.home-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0;
+  width: 100%;
+}
+
+.home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 32px 0 16px;
+}
+
+.home-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.home-subtitle {
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0 48px;
+  width: 100%;
+}
+
+/* ===== CSS Cat Face ===== */
+.home-cat {
+  position: relative;
+  width: 100px;
+  height: 112px;
+  animation: cat-float 3s ease-in-out infinite;
+}
+
+@keyframes cat-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.home-cat-body {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background: var(--color-primary-container);
+  border-radius: 50%;
+  border: 3px solid var(--color-primary);
+}
+
+/* Ears via pseudo-elements */
+.home-cat-body::before,
+.home-cat-body::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 16px solid transparent;
+  border-right: 16px solid transparent;
+  border-bottom: 26px solid var(--color-primary);
+  top: -20px;
+}
+
+.home-cat-body::before { left: 8px; }
+.home-cat-body::after  { right: 8px; }
+
+.home-cat-eye {
+  position: absolute;
+  width: 14px;
+  height: 18px;
+  background: var(--color-on-surface);
+  border-radius: 50%;
+  top: 30px;
+}
+
+.home-cat-eye--left  { left: 20px; }
+.home-cat-eye--right { right: 20px; }
+
+.home-cat-eye::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+}
+
+.home-cat-nose {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid #FF8899;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ===== Game Over Screen ===== */
+.gameover-inner {
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 24px;
+}
+
+.gameover-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 40px;
+  font-weight: 800;
+  color: var(--color-error);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.gameover-score {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  text-align: center;
+}
+
+.gameover-best-badge {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #333;
+  font-weight: 800;
+  font-size: 16px;
+  padding: 6px 20px;
+  border-radius: 9999px;
+  letter-spacing: 0.5px;
+}
+
+.gameover-hint {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.gameover-btn {
+  margin-top: 8px;
+}
+
+/* ===== Nickname Screen ===== */
+.nickname-inner {
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px 24px;
+}
+
+.nickname-title {
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.nickname-hint {
+  text-align: center;
+}
+
+.nickname-input-html {
+  width: 100%;
+  background: var(--color-surface-container);
+  color: var(--color-on-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: 12px;
+  padding: 12px 16px;
+  text-align: center;
+  outline: none;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 18px;
+  transition: border-color 0.2s ease;
+}
+
+.nickname-input-html:focus {
+  border-color: var(--color-primary-dim, var(--color-primary));
+  box-shadow: 0 0 0 3px rgba(0, 103, 134, 0.15);
+}
+
+.nickname-input-html::placeholder {
+  color: var(--color-outline);
+}
+
+/* ===== Ranking Screen ===== */
+.ranking-list-container {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 0 16px;
+}
+
+.ranking-status-msg {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.ranking-thumb-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.ranking-footer {
+  padding: 12px 0 40px;
+  width: 100%;
+}
+
+/* ===== Screenshot Modal ===== */
+.screenshot-modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 20;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.screenshot-modal-img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+  border: 2px solid var(--color-primary);
+  object-fit: contain;
+}
+
+.screenshot-modal-hint {
+  text-align: center;
+}
+
+/* ===== HUD ===== */
+#hud-container {
+  display: none; /* shown only during playing */
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 8px 10px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.hud-score-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hud-score {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--canvas-text, #fff);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.hud-best {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 12px;
+  color: var(--canvas-text, #aaa);
+  opacity: 0.75;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.hud-next-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hud-next-label {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--canvas-text, #fff);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.hud-next-canvas {
+  display: block;
+}
+
+.hud-settings-btn {
+  pointer-events: auto;
+  background: rgba(0,0,0,0.3);
+  border-color: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+/* ===== Polish ===== */
+/* Hover states for desktop */
+.btn-primary:hover {
+  background: var(--color-primary-dim, var(--color-primary));
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 103, 134, 0.3);
+}
+
+.btn-secondary:hover {
+  background: var(--color-surface-container-high);
+  transform: translateY(-1px);
+}
+
+.btn-icon:hover {
+  background: var(--color-surface-container-high);
+}
+
+/* Active tap feedback already covered by .btn:active scale(0.96) */
+
+/* Nyanmorphic on dark mode slight glow */
+[data-theme="dark"] .nyanmorphic {
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(129, 212, 250, 0.05);
+}
+
+/* Smooth theme transitions */
+.screen {
+  transition: opacity 0.28s ease, transform 0.28s ease, background-color 0.3s ease;
+}
+
+/* ===== Utility ===== */
+.text-center {
+  text-align: center;
+}
+
+.text-muted {
+  color: var(--color-on-surface-variant);
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-12 {
+  gap: 12px;
+}
+
+.w-full {
+  width: 100%;
 }

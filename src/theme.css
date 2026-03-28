@@ -1,0 +1,142 @@
+/* ===== Pastel Theme (default) ===== */
+:root,
+[data-theme="pastel"] {
+  /* Surface colors */
+  --color-background: #fafaf5;
+  --color-surface: #fafaf5;
+  --color-surface-container: #edefe8;
+  --color-surface-container-high: #e7e9e2;
+  --color-surface-container-highest: #e0e4dc;
+  --color-surface-container-low: #f3f4ee;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-variant: #e0e4dc;
+  --color-surface-dim: #d8dbd3;
+
+  /* Primary */
+  --color-primary: #006786;
+  --color-primary-container: #81d4fa;
+  --color-primary-dim: #005a75;
+  --color-on-primary: #f3faff;
+  --color-on-primary-container: #00485e;
+  --color-inverse-primary: #81d4fa;
+
+  /* Secondary */
+  --color-secondary: #815163;
+  --color-secondary-container: #ffd9e4;
+  --color-on-secondary: #fff7f7;
+  --color-on-secondary-container: #724456;
+
+  /* Tertiary */
+  --color-tertiary: #646038;
+  --color-tertiary-container: #fef8c3;
+  --color-on-tertiary: #fffada;
+
+  /* Text / On-surface */
+  --color-on-surface: #2f342e;
+  --color-on-surface-variant: #5c605a;
+  --color-on-background: #2f342e;
+
+  /* Outline */
+  --color-outline: #787c75;
+  --color-outline-variant: #afb3ac;
+
+  /* Error */
+  --color-error: #a83836;
+  --color-error-container: #fa746f;
+  --color-on-error: #fff7f6;
+
+  /* Inverse */
+  --color-inverse-surface: #0d0f0c;
+  --color-inverse-on-surface: #9c9d99;
+
+  /* Canvas-specific tokens */
+  --canvas-bg: #f0f1eb;
+  --canvas-container: #ffffffcc;
+  --canvas-wall: #d0d4cc;
+  --canvas-wall-accent: #006786;
+  --canvas-death-line: #a8383644;
+  --canvas-text: #2f342e;
+  --canvas-accent: #006786;
+  --canvas-score: #006786;
+  --canvas-drop-guide: #00678633;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.6);
+  --glass-shadow: rgba(129, 212, 250, 0.1);
+
+  /* Background pattern */
+  --bg-pattern-opacity: 0.06;
+  --bg-pattern-url: url('/bg-pastel.svg');
+}
+
+/* ===== Dark Theme ===== */
+[data-theme="dark"] {
+  /* Surface colors */
+  --color-background: #0d0f1a;
+  --color-surface: #1a1a2e;
+  --color-surface-container: #16213e;
+  --color-surface-container-high: #1e2a4a;
+  --color-surface-container-highest: #263050;
+  --color-surface-container-low: #121a30;
+  --color-surface-container-lowest: #0a0e1e;
+  --color-surface-variant: #2a2a4e;
+  --color-surface-dim: #0d0f1a;
+
+  /* Primary */
+  --color-primary: #81d4fa;
+  --color-primary-container: #00485e;
+  --color-primary-dim: #72c6eb;
+  --color-on-primary: #003343;
+  --color-on-primary-container: #81d4fa;
+  --color-inverse-primary: #006786;
+
+  /* Secondary */
+  --color-secondary: #ffc5d8;
+  --color-secondary-container: #5d3243;
+  --color-on-secondary: #3f1928;
+  --color-on-secondary-container: #ffd9e4;
+
+  /* Tertiary */
+  --color-tertiary: #f0eab6;
+  --color-tertiary-container: #4f4d26;
+  --color-on-tertiary: #3a3812;
+
+  /* Text / On-surface */
+  --color-on-surface: #e0e4dc;
+  --color-on-surface-variant: #afb3ac;
+  --color-on-background: #e0e4dc;
+
+  /* Outline */
+  --color-outline: #787c75;
+  --color-outline-variant: #5c605a;
+
+  /* Error */
+  --color-error: #fa746f;
+  --color-error-container: #6e0a12;
+  --color-on-error: #fff7f6;
+
+  /* Inverse */
+  --color-inverse-surface: #e0e4dc;
+  --color-inverse-on-surface: #2f342e;
+
+  /* Canvas-specific tokens */
+  --canvas-bg: #1a1a2e;
+  --canvas-container: #16213e;
+  --canvas-wall: #4a3728;
+  --canvas-wall-accent: #81d4fa;
+  --canvas-death-line: #FF444466;
+  --canvas-text: #FFFFFF;
+  --canvas-accent: #81d4fa;
+  --canvas-score: #FFD700;
+  --canvas-drop-guide: #FFFFFF33;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(22, 33, 62, 0.7);
+  --glass-border: rgba(129, 212, 250, 0.15);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+
+  /* Background pattern */
+  --bg-pattern-opacity: 0.08;
+  --bg-pattern-url: url('/bg-dark.svg');
+}

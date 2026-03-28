@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400">
+  <defs>
+    <pattern id="stars" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <!-- Stars -->
+      <circle cx="12" cy="12" r="1.5" fill="#81d4fa" opacity="0.5"/>
+      <circle cx="40" cy="8"  r="1"   fill="#81d4fa" opacity="0.4"/>
+      <circle cx="68" cy="20" r="2"   fill="#81d4fa" opacity="0.45"/>
+      <circle cx="24" cy="40" r="1.5" fill="#ffc5d8" opacity="0.4"/>
+      <circle cx="56" cy="52" r="1"   fill="#81d4fa" opacity="0.5"/>
+      <circle cx="8"  cy="64" r="2"   fill="#ffc5d8" opacity="0.35"/>
+      <circle cx="72" cy="68" r="1.5" fill="#81d4fa" opacity="0.45"/>
+      <!-- Tiny sparkle -->
+      <path d="M36 36 L37 34 L38 36 L40 37 L38 38 L37 40 L36 38 L34 37 Z" fill="#81d4fa" opacity="0.3"/>
+      <!-- Moon crescent hint -->
+      <path d="M60 16 A6 6 0 1 1 56 16 A4 4 0 1 0 60 16" fill="#ffd9e4" opacity="0.2"/>
+    </pattern>
+  </defs>
+  <rect width="400" height="400" fill="url(#stars)"/>
+</svg>

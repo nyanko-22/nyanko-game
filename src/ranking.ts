@@ -1,5 +1,6 @@
 import { fetchTopScores, type ScoreEntry } from './firebase';
 import { MAX_RANKING_ENTRIES } from './constants';
+import type { RankingRenderData } from './screens/ranking';
 
 let cachedScores: ScoreEntry[] = [];
 let loading = false;
@@ -10,7 +11,7 @@ let selectedScreenshot: { url: string; img: HTMLImageElement | null } | null = n
 // Thumbnail cache
 const thumbnailCache = new Map<string, HTMLImageElement>();
 
-export function getRankingData() {
+export function getRankingData(): RankingRenderData {
   return { scores: cachedScores, loading, error, scrollOffset, selectedScreenshot };
 }
 
