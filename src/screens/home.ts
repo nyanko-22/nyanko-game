@@ -25,12 +25,12 @@ function buildScreen(): HTMLDivElement {
 
   // Siamese cat canvas
   const catCanvas = document.createElement('canvas');
-  catCanvas.width = 110;
-  catCanvas.height = 120;
+  catCanvas.width = 140;
+  catCanvas.height = 155;
   catCanvas.className = 'home-cat-canvas';
   const catCtx = catCanvas.getContext('2d')!;
-  catCtx.translate(55, 68);
-  drawCatFace(catCtx, 2, CATS[2].radius * 1.1);
+  catCtx.translate(70, 88);
+  drawCatFace(catCtx, 2, CATS[2].radius * 1.4);
 
   const titleEl = el('h1', { className: 'home-title' });
   titleEl.textContent = 'にゃんこゲーム';

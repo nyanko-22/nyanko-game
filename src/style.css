@@ -25,7 +25,7 @@ html, body {
   align-items: center;
   position: relative;
   background-image: var(--bg-pattern-url);
-  background-size: 160px 160px;
+  background-size: var(--bg-pattern-size, 160px 160px);
   background-repeat: repeat;
   background-position: center;
 }
@@ -668,6 +668,45 @@ html, body {
 }
 
 /* ===== Ranking Screen ===== */
+.ranking-your-stats {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid var(--color-primary);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+
+.ranking-your-stats-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 8px;
+}
+
+.ranking-your-stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.ranking-your-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-outline);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ranking-your-stat-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
 .ranking-list-container {
   flex: 1;
   overflow-y: auto;
@@ -696,6 +735,7 @@ html, body {
   display: none;
   position: fixed;
   inset: 0;
+  pointer-events: auto;
   background: rgba(0, 0, 0, 0.88);
   flex-direction: column;
   align-items: center;

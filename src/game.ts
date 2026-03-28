@@ -12,7 +12,7 @@ import { initHud, updateHud, showHud, hideHud } from './screens/hud';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
 import { playMeow, playGameOver, ensureAudioReady, startBgm, stopBgm } from './sound';
 import { submitScore } from './firebase';
-import { loadRanking, getRankingData, resetRanking } from './ranking';
+import { loadRanking, getRankingData, resetRanking, setCurrentPlayer } from './ranking';
 
 export interface Particle {
   x: number;
@@ -195,6 +195,7 @@ async function handleNicknameSubmit(nickname: string): Promise<void> {
   submitting = false;
   gameOverScreenshotBlob = null;
   state = 'ranking';
+  setCurrentPlayer(nickname, getScore(), getHighScore());
   resetRanking();
   loadRanking();
   showRankingScreen(getRankingData(), {

@@ -51,7 +51,7 @@
 
   /* Canvas-specific tokens */
   --canvas-bg: #f0f1eb;
-  --canvas-container: #ffffffcc;
+  --canvas-container: rgba(255, 255, 255, 0.2);
   --canvas-wall: #d0d4cc;
   --canvas-wall-accent: #006786;
   --canvas-death-line: #a8383644;
@@ -67,7 +67,7 @@
 
   /* Background pattern */
   --bg-pattern-opacity: 0.06;
-  --bg-pattern-url: url('/bg-pastel.svg');
+  --bg-pattern-size: 160px 160px;
 }
 
 /* ===== Dark Theme ===== */
@@ -122,7 +122,7 @@
 
   /* Canvas-specific tokens */
   --canvas-bg: #1a1a2e;
-  --canvas-container: #16213e;
+  --canvas-container: rgba(22, 33, 62, 0.45);
   --canvas-wall: #4a3728;
   --canvas-wall-accent: #81d4fa;
   --canvas-death-line: #FF444466;
@@ -138,5 +138,5 @@
 
   /* Background pattern */
   --bg-pattern-opacity: 0.08;
-  --bg-pattern-url: url('/bg-dark.svg');
+  --bg-pattern-size: 320px 320px;
 }

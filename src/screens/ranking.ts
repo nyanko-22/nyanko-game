@@ -8,10 +8,13 @@ export interface RankingRenderData {
   scrollOffset: number;
   selectedScreenshot: { url: string; img: HTMLImageElement | null } | null;
   submitting?: boolean;
+  currentPlayer?: { nickname: string; score: number };
+  personalHighScore?: number;
 }
 
 let screen: HTMLDivElement | null = null;
 let listEl: HTMLDivElement | null = null;
+let yourStatsEl: HTMLDivElement | null = null;
 let onBackCallback: (() => void) | null = null;
 let onPlayAgainCallback: (() => void) | null = null;
 let modalEl: HTMLDivElement | null = null;
@@ -36,6 +39,10 @@ function buildScreen(): HTMLDivElement {
   spacer.style.width = '40px';
   header.append(backBtn, title, spacer);
 
+  // YOUR STATS card (hidden by default, shown when currentPlayer exists)
+  yourStatsEl = el('div', { className: 'ranking-your-stats' });
+  yourStatsEl.style.display = 'none';
+
   // Ranking list
   listEl = el('div', { className: 'ranking-list-container' });
 
@@ -46,14 +53,56 @@ function buildScreen(): HTMLDivElement {
   playAgainBtn.addEventListener('click', () => onPlayAgainCallback?.());
   footer.appendChild(playAgainBtn);
 
-  inner.append(header, listEl, footer);
+  inner.append(header, yourStatsEl, listEl, footer);
   screen.appendChild(inner);
 
   return screen;
 }
 
+function renderYourStats(data: RankingRenderData): void {
+  if (!yourStatsEl) return;
+  if (!data.currentPlayer) {
+    yourStatsEl.style.display = 'none';
+    return;
+  }
+  yourStatsEl.style.display = 'block';
+  clearEl(yourStatsEl);
+
+  const { score } = data.currentPlayer;
+  const rank = data.loading
+    ? null
+    : data.scores.filter(s => s.score > score).length + 1;
+
+  const rankStr = rank !== null ? `#${rank}` : '---';
+  const highStr = data.personalHighScore ? `${data.personalHighScore.toLocaleString()} pts` : '---';
+
+  const row = el('div', { className: 'ranking-your-stats-row' });
+
+  const rankBlock = el('div', { className: 'ranking-your-stat-block' });
+  rankBlock.append(
+    el('div', { className: 'ranking-your-stat-label', textContent: 'あなたの順位' }),
+    el('div', { className: 'ranking-your-stat-value', textContent: rankStr }),
+  );
+
+  const scoreBlock = el('div', { className: 'ranking-your-stat-block' });
+  scoreBlock.append(
+    el('div', { className: 'ranking-your-stat-label', textContent: 'スコア' }),
+    el('div', { className: 'ranking-your-stat-value', textContent: `${score.toLocaleString()} pts` }),
+  );
+
+  const bestBlock = el('div', { className: 'ranking-your-stat-block' });
+  bestBlock.append(
+    el('div', { className: 'ranking-your-stat-label', textContent: 'ハイスコア' }),
+    el('div', { className: 'ranking-your-stat-value', textContent: highStr }),
+  );
+
+  row.append(rankBlock, scoreBlock, bestBlock);
+  yourStatsEl.appendChild(row);
+}
+
 function renderList(data: RankingRenderData): void {
   if (!listEl) return;
+  renderYourStats(data);
   clearEl(listEl);
 
   if (data.loading) {

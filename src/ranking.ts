@@ -7,12 +7,19 @@ let loading = false;
 let error = false;
 let scrollOffset = 0;
 let selectedScreenshot: { url: string; img: HTMLImageElement | null } | null = null;
+let currentPlayer: { nickname: string; score: number } | null = null;
+let personalHighScore = 0;
 
 // Thumbnail cache
 const thumbnailCache = new Map<string, HTMLImageElement>();
 
 export function getRankingData(): RankingRenderData {
-  return { scores: cachedScores, loading, error, scrollOffset, selectedScreenshot };
+  return { scores: cachedScores, loading, error, scrollOffset, selectedScreenshot, currentPlayer: currentPlayer ?? undefined, personalHighScore };
+}
+
+export function setCurrentPlayer(nickname: string, score: number, highScore: number): void {
+  currentPlayer = { nickname, score };
+  personalHighScore = highScore;
 }
 
 export async function loadRanking(): Promise<void> {
@@ -64,4 +71,6 @@ export function closeScreenshot(): void {
 export function resetRanking(): void {
   scrollOffset = 0;
   selectedScreenshot = null;
+  currentPlayer = null;
+  personalHighScore = 0;
 }
