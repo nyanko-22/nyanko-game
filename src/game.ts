@@ -116,7 +116,7 @@ function openHomeScreen(): void {
   });
 }
 
-export function openSettings(): void {
+export function openSettings(fromHud = false): void {
   settingsOpen = true;
   showSettingsScreen({
     onClose: () => {
@@ -132,6 +132,16 @@ export function openSettings(): void {
     onScreenshot: () => {
       takeScreenshot();
     },
+    ...(fromHud ? {
+      onGoHome: () => {
+        settingsOpen = false;
+        hideSettingsScreen();
+        stopBgm();
+        hideHud();
+        state = 'title';
+        openHomeScreen();
+      },
+    } : {}),
   });
 }
 
@@ -323,7 +333,7 @@ export function initGame(): void {
   initPhysics();
   onMerge(handleMerge);
   initInput(canvas, () => CATS[currentLevel].radius);
-  initHud({ onSettings: openSettings });
+  initHud({ onSettings: () => openSettings(true) });
   openHomeScreen();
 
   requestAnimationFrame(gameLoop);

@@ -49,13 +49,6 @@ function buildScreen(): HTMLDivElement {
   inner.append(header, listEl, footer);
   screen.appendChild(inner);
 
-  // Screenshot modal (covers full screen)
-  modalEl = el('div', { className: 'screenshot-modal' });
-  modalEl.addEventListener('click', () => {
-    if (modalEl) modalEl.style.display = 'none';
-  });
-  screen.appendChild(modalEl);
-
   return screen;
 }
 
@@ -117,7 +110,17 @@ function renderList(data: RankingRenderData): void {
   }
 }
 
+function ensureModal(): void {
+  if (modalEl) return;
+  modalEl = el('div', { className: 'screenshot-modal' });
+  modalEl.addEventListener('click', () => {
+    if (modalEl) modalEl.style.display = 'none';
+  });
+  document.getElementById('overlay-container')!.appendChild(modalEl);
+}
+
 function showScreenshotModal(url: string): void {
+  ensureModal();
   if (!modalEl) return;
   clearEl(modalEl);
   modalEl.style.display = 'flex';
@@ -149,6 +152,11 @@ export function showRankingScreen(
 
 export function hideRankingScreen(): void {
   if (screen) hideScreen(screen);
+  if (modalEl) {
+    modalEl.style.display = 'none';
+    modalEl.remove();
+    modalEl = null;
+  }
 }
 
 export function updateRankingScreen(data: RankingRenderData): void {

@@ -1,4 +1,6 @@
 import { createScreen, showScreen, hideScreen, el, materialIcon } from './shared';
+import { drawCatFace } from '../renderer';
+import { CATS } from '../constants';
 
 let screen: HTMLDivElement | null = null;
 let onStartCallback: (() => void) | null = null;
@@ -21,14 +23,14 @@ function buildScreen(): HTMLDivElement {
   // Hero section
   const hero = el('div', { className: 'home-hero' });
 
-  // CSS cat face
-  const catWrap = el('div', { className: 'home-cat' });
-  const catBody = el('div', { className: 'home-cat-body' });
-  const eyeLeft = el('div', { className: 'home-cat-eye home-cat-eye--left' });
-  const eyeRight = el('div', { className: 'home-cat-eye home-cat-eye--right' });
-  const nose = el('div', { className: 'home-cat-nose' });
-  catBody.append(eyeLeft, eyeRight, nose);
-  catWrap.appendChild(catBody);
+  // Siamese cat canvas
+  const catCanvas = document.createElement('canvas');
+  catCanvas.width = 110;
+  catCanvas.height = 120;
+  catCanvas.className = 'home-cat-canvas';
+  const catCtx = catCanvas.getContext('2d')!;
+  catCtx.translate(55, 68);
+  drawCatFace(catCtx, 2, CATS[2].radius * 1.1);
 
   const titleEl = el('h1', { className: 'home-title' });
   titleEl.textContent = 'にゃんこゲーム';
@@ -36,7 +38,7 @@ function buildScreen(): HTMLDivElement {
   const subtitleEl = el('p', { className: 'home-subtitle text-body text-muted' });
   subtitleEl.textContent = '同じ猫同士をくっつけて大きな猫を作ろう!';
 
-  hero.append(catWrap, titleEl, subtitleEl);
+  hero.append(catCanvas, titleEl, subtitleEl);
 
   // Action buttons
   const actions = el('div', { className: 'home-actions' });

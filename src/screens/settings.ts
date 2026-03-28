@@ -6,6 +6,7 @@ let screen: HTMLDivElement | null = null;
 let onCloseCallback: (() => void) | null = null;
 let onRestartCallback: (() => void) | null = null;
 let onScreenshotCallback: (() => void) | null = null;
+let onGoHomeCallback: (() => void) | null = null;
 
 function buildScreen(): HTMLDivElement {
   screen = createScreen('settings-screen');
@@ -33,16 +34,12 @@ function buildScreen(): HTMLDivElement {
   settingsSubtitle.textContent = 'Customize your feline adventure';
   settingsSubtitle.style.marginBottom = '20px';
 
-  // BGM/SE toggles card
+  // BGM/SE sliders card
   const audioCard = el('div', { className: 'nyanmorphic' });
   audioCard.style.marginBottom = '16px';
   audioCard.append(
-    createToggleRow('BGM', 'volume_up', getBgmVolume() > 0, (on) => {
-      setBgmVolume(on ? 1 : 0);
-    }),
-    createToggleRow('SE', 'volume_up', getSeVolume() > 0, (on) => {
-      setSeVolume(on ? 1 : 0);
-    }),
+    createSliderRow('BGM', 'volume_up', getBgmVolume(), (v) => setBgmVolume(v)),
+    createSliderRow('SE', 'music_note', getSeVolume(), (v) => setSeVolume(v)),
   );
 
   // Theme section
@@ -61,6 +58,11 @@ function buildScreen(): HTMLDivElement {
   const actionsCard = el('div', { className: 'nyanmorphic' });
   actionsCard.style.marginBottom = '16px';
 
+  if (onGoHomeCallback) {
+    const goHomeRow = createActionRow('home', 'ホームへ戻る', () => onGoHomeCallback?.());
+    goHomeRow.style.color = 'var(--color-primary)';
+    actionsCard.appendChild(goHomeRow);
+  }
   const restartRow = createActionRow('restart_alt', 'やり直す', () => onRestartCallback?.());
   restartRow.style.color = 'var(--color-error)';
   const screenshotRow = createActionRow('photo_camera', 'スクリーンショット', () => onScreenshotCallback?.());
@@ -85,23 +87,22 @@ function buildScreen(): HTMLDivElement {
   return screen;
 }
 
-function createToggleRow(label: string, icon: string, checked: boolean, onChange: (on: boolean) => void): HTMLDivElement {
-  const row = el('div', { className: 'settings-row' });
+function createSliderRow(label: string, icon: string, value: number, onChange: (v: number) => void): HTMLDivElement {
+  const row = el('div', { className: 'settings-row settings-slider-row' });
 
   const labelContainer = el('div', { className: 'settings-row-label' });
   labelContainer.append(materialIcon(icon), document.createTextNode(label));
 
-  const toggle = el('label', { className: 'toggle' });
   const input = document.createElement('input');
-  input.type = 'checkbox';
-  input.checked = checked;
-  input.addEventListener('change', () => onChange(input.checked));
+  input.type = 'range';
+  input.className = 'settings-slider';
+  input.min = '0';
+  input.max = '1';
+  input.step = '0.05';
+  input.value = String(value);
+  input.addEventListener('input', () => onChange(parseFloat(input.value)));
 
-  const track = el('span', { className: 'toggle-track' });
-  const thumb = el('span', { className: 'toggle-thumb' });
-  toggle.append(input, track, thumb);
-
-  row.append(labelContainer, toggle);
+  row.append(labelContainer, input);
   return row;
 }
 
@@ -185,19 +186,25 @@ export function showSettingsScreen(callbacks: {
   onClose: () => void;
   onRestart: () => void;
   onScreenshot: () => void;
+  onGoHome?: () => void;
 }): void {
   onCloseCallback = callbacks.onClose;
   onRestartCallback = callbacks.onRestart;
   onScreenshotCallback = callbacks.onScreenshot;
+  onGoHomeCallback = callbacks.onGoHome ?? null;
 
-  if (!screen) {
-    screen = buildScreen();
+  // Rebuild each time so "ホームへ戻る" button reflects current context
+  if (screen) {
+    screen.remove();
+    screen = null;
   }
-  // Refresh toggle states
-  const inputs = screen.querySelectorAll('input[type="checkbox"]') as NodeListOf<HTMLInputElement>;
-  if (inputs.length >= 2) {
-    inputs[0].checked = getBgmVolume() > 0;
-    inputs[1].checked = getSeVolume() > 0;
+  screen = buildScreen();
+
+  // Refresh slider values
+  const sliders = screen.querySelectorAll('input[type="range"]') as NodeListOf<HTMLInputElement>;
+  if (sliders.length >= 2) {
+    sliders[0].value = String(getBgmVolume());
+    sliders[1].value = String(getSeVolume());
   }
   refreshThemeCards();
   showScreen(screen);

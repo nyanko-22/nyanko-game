@@ -276,6 +276,19 @@ html, body {
   font-weight: 500;
 }
 
+.settings-slider-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.settings-slider {
+  width: 100%;
+  accent-color: var(--color-primary);
+  height: 4px;
+  cursor: pointer;
+}
+
 /* ===== Theme Card ===== */
 .theme-card {
   position: relative;
@@ -490,6 +503,11 @@ html, body {
   width: 100%;
 }
 
+.home-cat-canvas {
+  animation: cat-float 3s ease-in-out infinite;
+  display: block;
+}
+
 /* ===== CSS Cat Face ===== */
 .home-cat {
   position: relative;
@@ -676,7 +694,7 @@ html, body {
 /* ===== Screenshot Modal ===== */
 .screenshot-modal {
   display: none;
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.88);
   flex-direction: column;

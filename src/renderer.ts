@@ -24,7 +24,7 @@ export function createCanvas(): HTMLCanvasElement {
   return canvas;
 }
 
-function drawCatFace(ctx: CanvasRenderingContext2D, level: number, radius: number): void {
+export function drawCatFace(ctx: CanvasRenderingContext2D, level: number, radius: number): void {
   const cat = CATS[level];
 
   // Body circle
@@ -246,16 +246,18 @@ export function render(
   currentLevel: number,
   particles: Particle[],
 ): void {
-  // Background
-  ctx.fillStyle = '#1a1a2e';
-  ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+  // Background (transparent — CSS background shows through)
+  ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-  // Container background
-  ctx.fillStyle = '#16213e';
+  // Container background (semi-transparent, uses CSS theme variable)
+  const docStyle = getComputedStyle(document.documentElement);
+  const containerBg = docStyle.getPropertyValue('--canvas-container').trim() || 'rgba(255,255,255,0.12)';
+  const wallColor = docStyle.getPropertyValue('--canvas-wall').trim() || '#888888';
+  ctx.fillStyle = containerBg;
   ctx.fillRect(CONTAINER_X, CONTAINER_Y, CONTAINER_WIDTH, CONTAINER_HEIGHT);
 
   // Container walls
-  ctx.fillStyle = '#4a3728';
+  ctx.fillStyle = wallColor;
   // Left wall
   ctx.fillRect(CONTAINER_X - WALL_THICKNESS, CONTAINER_Y, WALL_THICKNESS, CONTAINER_HEIGHT + WALL_THICKNESS);
   // Right wall
