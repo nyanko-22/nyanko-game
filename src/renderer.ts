@@ -239,6 +239,7 @@ export function render(
   bodies: Matter.Body[],
   state: 'title' | 'playing' | 'gameover',
   cursorX: number,
+  currentLevel: number,
   nextLevel: number,
   score: number,
   highScore: number,
@@ -288,11 +289,11 @@ export function render(
     ctx.setLineDash([]);
 
     // Preview of current cat at drop position
-    const previewCat = CATS[nextLevel];
+    const previewCat = CATS[currentLevel];
     ctx.save();
     ctx.globalAlpha = 0.5;
     ctx.translate(cursorX, DROP_Y);
-    drawCatFace(ctx, nextLevel, previewCat.radius);
+    drawCatFace(ctx, currentLevel, previewCat.radius);
     ctx.restore();
   }
 

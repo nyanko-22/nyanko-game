@@ -5,7 +5,6 @@ const MEOW_FILES = [
   'sounds/meow2.mp3',
   'sounds/meow3.mp3',
   'sounds/meow4.mp3',
-  'sounds/meow5.mp3',
 ];
 
 const buffers: (AudioBuffer | null)[] = MEOW_FILES.map(() => null);

@@ -98,7 +98,7 @@ function gameLoop(timestamp: number): void {
       return;
     }
     const bodies = getAllBodies();
-    render(ctx, bodies, state, getCursorX(), currentLevel, getScore(), getHighScore(), particles);
+    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles);
     return;
   }
 
@@ -108,7 +108,7 @@ function gameLoop(timestamp: number): void {
       return;
     }
     const bodies = getAllBodies();
-    render(ctx, bodies, state, getCursorX(), currentLevel, getScore(), getHighScore(), particles);
+    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles);
     return;
   }
 
@@ -159,7 +159,7 @@ function gameLoop(timestamp: number): void {
     shakeOffset *= shakeDecay;
   }
 
-  render(ctx, bodies, state, getCursorX(), currentLevel, getScore(), getHighScore(), particles);
+  render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles);
 
   if (shakeOffset > 0.1) {
     ctx.restore();
