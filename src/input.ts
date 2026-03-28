@@ -10,6 +10,12 @@ const state: InputState = {
   dropped: false,
 };
 
+let suppressNextDrop = false;
+
+export function suppressDrop(): void {
+  suppressNextDrop = true;
+}
+
 function canvasToGame(canvas: HTMLCanvasElement, clientX: number, clientY: number): { x: number; y: number } {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -48,6 +54,11 @@ export function initInput(canvas: HTMLCanvasElement, catRadiusFn: () => number):
 }
 
 export function consumeDrop(): boolean {
+  if (suppressNextDrop) {
+    suppressNextDrop = false;
+    state.dropped = false;
+    return false;
+  }
   if (state.dropped) {
     state.dropped = false;
     return true;

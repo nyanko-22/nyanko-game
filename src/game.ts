@@ -1,7 +1,7 @@
 import { CATS, DROP_Y, DROP_COOLDOWN_MS, MAX_DROP_LEVEL, DEATH_LINE_Y, DEATH_GRACE_FRAMES, GAME_WIDTH, GAME_HEIGHT, SCREENSHOT_QUALITY } from './constants';
 import { createCat } from './cats';
 import { initPhysics, stepPhysics, addBody, getAllBodies, onMerge, clearCats, type MergeEvent } from './physics';
-import { initInput, consumeDrop, getCursorX } from './input';
+import { initInput, consumeDrop, getCursorX, suppressDrop } from './input';
 import { createCanvas, render, SETTINGS_BUTTON, SETTINGS_LAYOUT, NICKNAME_LAYOUT, RANKING_LAYOUT, TITLE_LAYOUT, type GameState, type RankingRenderData } from './renderer';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
 import { playMeow, playGameOver, ensureAudioReady, startBgm, stopBgm, getBgmVolume, getSeVolume, setBgmVolume, setSeVolume } from './sound';
@@ -364,6 +364,7 @@ function setupSettingsInput(): void {
   canvas.addEventListener('mousedown', (e) => {
     if (handleDown(e.clientX, e.clientY)) {
       e.stopPropagation();
+      suppressDrop();
     }
   }, true);
 
@@ -378,6 +379,7 @@ function setupSettingsInput(): void {
     if (handleDown(touch.clientX, touch.clientY)) {
       e.preventDefault();
       e.stopPropagation();
+      suppressDrop();
     }
   }, { capture: true, passive: false });
 
