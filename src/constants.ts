@@ -32,3 +32,5 @@ export const DROP_Y = CONTAINER_Y - 10;
 export const DROP_COOLDOWN_MS = 500;
 export const MAX_DROP_LEVEL = 4;
 export const DEATH_GRACE_FRAMES = 60;
+export const MAX_RANKING_ENTRIES = 20;
+export const SCREENSHOT_QUALITY = 0.7;

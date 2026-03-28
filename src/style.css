@@ -21,3 +21,20 @@ html, body {
   justify-content: center;
   align-items: center;
 }
+
+.nickname-input {
+  position: fixed;
+  z-index: 100;
+  background: #16213e;
+  color: #FFFFFF;
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  padding: 4px 12px;
+  text-align: center;
+  outline: none;
+  font-family: sans-serif;
+}
+
+.nickname-input::placeholder {
+  color: #888;
+}

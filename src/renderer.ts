@@ -5,6 +5,39 @@ import {
   WALL_THICKNESS, DEATH_LINE_Y, DROP_Y,
 } from './constants';
 import type { Particle } from './game';
+import type { ScoreEntry } from './firebase';
+import { getThumbnail } from './ranking';
+
+export type GameState = 'title' | 'playing' | 'gameover' | 'nickname' | 'ranking';
+
+export interface RankingRenderData {
+  scores: ScoreEntry[];
+  loading: boolean;
+  error: boolean;
+  scrollOffset: number;
+  selectedScreenshot: { url: string; img: HTMLImageElement | null } | null;
+  submitting?: boolean;
+}
+
+// Ranking layout constants
+const RANKING_TITLE_Y = 40;
+const RANKING_LIST_Y = 80;
+const RANKING_LIST_H = 480;
+const RANKING_ROW_H = 50;
+const RANKING_BACK_BTN = { x: 30, y: GAME_HEIGHT - 50, w: 120, h: 36 };
+const RANKING_PLAY_BTN = { x: GAME_WIDTH - 150, y: GAME_HEIGHT - 50, w: 120, h: 36 };
+export const RANKING_LAYOUT = {
+  listY: RANKING_LIST_Y, listH: RANKING_LIST_H, rowH: RANKING_ROW_H,
+  backBtn: RANKING_BACK_BTN, playBtn: RANKING_PLAY_BTN,
+};
+
+// Nickname screen layout
+const NICK_SUBMIT_BTN = { x: (GAME_WIDTH - 160) / 2, y: GAME_HEIGHT * 0.58, w: 160, h: 40 };
+export const NICKNAME_LAYOUT = { submitBtn: NICK_SUBMIT_BTN };
+
+// Title screen ranking button
+const TITLE_RANKING_BTN = { x: (GAME_WIDTH - 140) / 2, y: GAME_HEIGHT / 2 + 190, w: 140, h: 40 };
+export const TITLE_LAYOUT = { rankingBtn: TITLE_RANKING_BTN };
 
 export function createCanvas(): HTMLCanvasElement {
   const canvas = document.createElement('canvas');
@@ -412,7 +445,7 @@ function drawSlider(
 export function render(
   ctx: CanvasRenderingContext2D,
   bodies: Matter.Body[],
-  state: 'title' | 'playing' | 'gameover',
+  state: GameState,
   cursorX: number,
   currentLevel: number,
   nextLevel: number,
@@ -422,6 +455,7 @@ export function render(
   settingsOpen: boolean,
   bgmVol: number,
   seVol: number,
+  rankingData?: RankingRenderData,
 ): void {
   // Background
   ctx.fillStyle = '#1a1a2e';
@@ -452,6 +486,19 @@ export function render(
 
   if (state === 'title') {
     drawTitleScreen(ctx);
+    return;
+  }
+
+  if (state === 'nickname') {
+    drawNicknameScreen(ctx, score, rankingData?.submitting ?? false);
+    return;
+  }
+
+  if (state === 'ranking' && rankingData) {
+    drawRankingScreen(ctx, rankingData);
+    if (rankingData.selectedScreenshot) {
+      drawScreenshotModal(ctx, rankingData.selectedScreenshot);
+    }
     return;
   }
 
@@ -562,6 +609,18 @@ function drawTitleScreen(ctx: CanvasRenderingContext2D): void {
   ctx.fillStyle = '#AAAAAA';
   ctx.fillText('同じ猫同士をくっつけて', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 140);
   ctx.fillText('大きな猫を作ろう!', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 160);
+
+  // Ranking button
+  const rbtn = TITLE_RANKING_BTN;
+  ctx.fillStyle = '#3498db';
+  ctx.beginPath();
+  ctx.roundRect(rbtn.x, rbtn.y, rbtn.w, rbtn.h, 8);
+  ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('ランキング', rbtn.x + rbtn.w / 2, rbtn.y + rbtn.h / 2);
 }
 
 function drawGameOverScreen(ctx: CanvasRenderingContext2D, score: number, highScore: number): void {
@@ -586,5 +645,193 @@ function drawGameOverScreen(ctx: CanvasRenderingContext2D, score: number, highSc
 
   ctx.fillStyle = '#AAAAAA';
   ctx.font = '18px sans-serif';
-  ctx.fillText('タップしてリスタート', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80);
+  ctx.fillText('タップして続ける', GAME_WIDTH / 2, GAME_HEIGHT / 2 + 80);
+}
+
+function drawNicknameScreen(ctx: CanvasRenderingContext2D, score: number, submitting: boolean): void {
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+  ctx.fillStyle = '#FFD700';
+  ctx.font = 'bold 28px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('スコア登録', GAME_WIDTH / 2, GAME_HEIGHT * 0.2);
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '22px sans-serif';
+  ctx.fillText(`SCORE: ${score}`, GAME_WIDTH / 2, GAME_HEIGHT * 0.3);
+
+  ctx.fillStyle = '#AAAAAA';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('ニックネームを入力してください', GAME_WIDTH / 2, GAME_HEIGHT * 0.4);
+
+  // Submit button
+  const btn = NICK_SUBMIT_BTN;
+  ctx.fillStyle = submitting ? '#555555' : '#e67e22';
+  ctx.beginPath();
+  ctx.roundRect(btn.x, btn.y, btn.w, btn.h, 8);
+  ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.fillText(submitting ? '送信中...' : '送信', btn.x + btn.w / 2, btn.y + btn.h / 2);
+}
+
+function drawRankingScreen(ctx: CanvasRenderingContext2D, data: RankingRenderData): void {
+  ctx.fillStyle = '#1a1a2e';
+  ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+  // Title
+  ctx.fillStyle = '#FFD700';
+  ctx.font = 'bold 28px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('ランキング', GAME_WIDTH / 2, RANKING_TITLE_Y);
+
+  if (data.loading) {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '18px sans-serif';
+    ctx.fillText('読み込み中...', GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    drawRankingButtons(ctx);
+    return;
+  }
+
+  if (data.error) {
+    ctx.fillStyle = '#FF6666';
+    ctx.font = '18px sans-serif';
+    ctx.fillText('読み込みに失敗しました', GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    drawRankingButtons(ctx);
+    return;
+  }
+
+  if (data.scores.length === 0) {
+    ctx.fillStyle = '#AAAAAA';
+    ctx.font = '18px sans-serif';
+    ctx.fillText('まだスコアがありません', GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    drawRankingButtons(ctx);
+    return;
+  }
+
+  // Clipping region for scrollable list
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(10, RANKING_LIST_Y, GAME_WIDTH - 20, RANKING_LIST_H);
+  ctx.clip();
+
+  const startY = RANKING_LIST_Y - data.scrollOffset;
+
+  for (let i = 0; i < data.scores.length; i++) {
+    const entry = data.scores[i];
+    const rowY = startY + i * RANKING_ROW_H;
+
+    // Skip rows outside visible area
+    if (rowY + RANKING_ROW_H < RANKING_LIST_Y || rowY > RANKING_LIST_Y + RANKING_LIST_H) continue;
+
+    // Row background
+    ctx.fillStyle = i % 2 === 0 ? '#16213e' : '#1a2744';
+    ctx.fillRect(10, rowY, GAME_WIDTH - 20, RANKING_ROW_H - 2);
+
+    // Rank
+    ctx.fillStyle = i < 3 ? '#FFD700' : '#FFFFFF';
+    ctx.font = 'bold 16px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(`${i + 1}.`, 20, rowY + RANKING_ROW_H / 2);
+
+    // Nickname
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '15px sans-serif';
+    ctx.fillText(entry.nickname, 55, rowY + RANKING_ROW_H / 2);
+
+    // Score
+    ctx.fillStyle = '#FFD700';
+    ctx.font = 'bold 15px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${entry.score}`, GAME_WIDTH - 70, rowY + RANKING_ROW_H / 2);
+
+    // Thumbnail
+    const thumb = getThumbnail(entry.screenshotUrl);
+    if (thumb) {
+      const thumbH = RANKING_ROW_H - 8;
+      const thumbW = thumbH * (GAME_WIDTH / GAME_HEIGHT);
+      ctx.drawImage(thumb, GAME_WIDTH - 55, rowY + 4, thumbW, thumbH);
+      ctx.strokeStyle = '#FFD70066';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(GAME_WIDTH - 55, rowY + 4, thumbW, thumbH);
+    }
+  }
+
+  ctx.restore();
+
+  // Scroll indicator
+  if (data.scores.length * RANKING_ROW_H > RANKING_LIST_H) {
+    const totalH = data.scores.length * RANKING_ROW_H;
+    const barH = Math.max(20, (RANKING_LIST_H / totalH) * RANKING_LIST_H);
+    const barY = RANKING_LIST_Y + (data.scrollOffset / (totalH - RANKING_LIST_H)) * (RANKING_LIST_H - barH);
+    ctx.fillStyle = '#FFFFFF33';
+    ctx.fillRect(GAME_WIDTH - 14, barY, 4, barH);
+  }
+
+  drawRankingButtons(ctx);
+}
+
+function drawRankingButtons(ctx: CanvasRenderingContext2D): void {
+  // Back button
+  const back = RANKING_BACK_BTN;
+  ctx.fillStyle = '#555555';
+  ctx.beginPath();
+  ctx.roundRect(back.x, back.y, back.w, back.h, 8);
+  ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 15px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('戻る', back.x + back.w / 2, back.y + back.h / 2);
+
+  // Play again button
+  const play = RANKING_PLAY_BTN;
+  ctx.fillStyle = '#e67e22';
+  ctx.beginPath();
+  ctx.roundRect(play.x, play.y, play.w, play.h, 8);
+  ctx.fill();
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillText('もう一度', play.x + play.w / 2, play.y + play.h / 2);
+}
+
+function drawScreenshotModal(
+  ctx: CanvasRenderingContext2D,
+  screenshot: { url: string; img: HTMLImageElement | null },
+): void {
+  // Dim background
+  ctx.fillStyle = '#000000DD';
+  ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+  if (!screenshot.img || !screenshot.img.complete) {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '18px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('読み込み中...', GAME_WIDTH / 2, GAME_HEIGHT / 2);
+  } else {
+    // Draw screenshot centered, scaled to fit
+    const img = screenshot.img;
+    const maxW = GAME_WIDTH - 40;
+    const maxH = GAME_HEIGHT - 100;
+    const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+    const w = img.naturalWidth * scale;
+    const h = img.naturalHeight * scale;
+    const x = (GAME_WIDTH - w) / 2;
+    const y = (GAME_HEIGHT - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+    ctx.strokeStyle = '#FFD700';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, h);
+  }
+
+  // Close hint
+  ctx.fillStyle = '#AAAAAA';
+  ctx.font = '14px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('タップして閉じる', GAME_WIDTH / 2, GAME_HEIGHT - 20);
 }
