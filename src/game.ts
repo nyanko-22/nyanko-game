@@ -122,6 +122,30 @@ function hitSlider(gx: number, gy: number): 'bgm' | 'se' | null {
   return null;
 }
 
+function hitButton(gx: number, gy: number, btnY: number): boolean {
+  const { btnX, btnW, btnH } = SETTINGS_LAYOUT;
+  return gx >= btnX && gx <= btnX + btnW && gy >= btnY && gy <= btnY + btnH;
+}
+
+function takeScreenshot(): void {
+  // Re-render without settings panel for clean screenshot
+  const wasOpen = settingsOpen;
+  settingsOpen = false;
+  const bodies = getAllBodies();
+  render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, false, getBgmVolume(), getSeVolume());
+  settingsOpen = wasOpen;
+
+  canvas.toBlob((blob) => {
+    if (!blob) return;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nyanko-game-${getScore()}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+}
+
 function updateSliderValue(gx: number): void {
   const { sliderX, sliderW } = SETTINGS_LAYOUT;
   const value = Math.max(0, Math.min(1, (gx - sliderX) / sliderW));
@@ -140,6 +164,18 @@ function setupSettingsInput(): void {
       // Close button
       if (isInCloseButton(gx, gy)) {
         settingsOpen = false;
+        return true;
+      }
+      // Restart button
+      if (hitButton(gx, gy, SETTINGS_LAYOUT.restartBtnY)) {
+        settingsOpen = false;
+        stopBgm();
+        startGame();
+        return true;
+      }
+      // Screenshot button
+      if (hitButton(gx, gy, SETTINGS_LAYOUT.screenshotBtnY)) {
+        takeScreenshot();
         return true;
       }
       // Slider drag start

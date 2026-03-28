@@ -125,19 +125,29 @@ async function loadSounds(): Promise<void> {
   ]);
 }
 
+let bgmPending = false;
+
 export function ensureAudioReady(): void {
   const ctx = getAudioContext();
   if (ctx.state === 'suspended') {
     ctx.resume();
   }
-  loadSounds();
+  loadSounds().then(() => {
+    if (bgmPending) {
+      bgmPending = false;
+      startBgm();
+    }
+  });
 }
 
 export function startBgm(): void {
   if (bgmPlaying) return;
-  const ctx = getAudioContext();
-  if (!bgmBuffer || !bgmGainNode) return;
+  if (!bgmBuffer || !bgmGainNode) {
+    bgmPending = true;
+    return;
+  }
 
+  const ctx = getAudioContext();
   bgmSource = ctx.createBufferSource();
   bgmSource.buffer = bgmBuffer;
   bgmSource.loop = true;

@@ -239,7 +239,7 @@ export const SETTINGS_BUTTON = { x: GAME_WIDTH - 30, y: GAME_HEIGHT - 30, radius
 
 // Settings panel layout
 const PANEL_W = 280;
-const PANEL_H = 200;
+const PANEL_H = 300;
 const PANEL_X = (GAME_WIDTH - PANEL_W) / 2;
 const PANEL_Y = (GAME_HEIGHT - PANEL_H) / 2;
 const SLIDER_X = PANEL_X + 30;
@@ -247,12 +247,19 @@ const SLIDER_W = PANEL_W - 60;
 const SLIDER_H = 8;
 const BGM_SLIDER_Y = PANEL_Y + 80;
 const SE_SLIDER_Y = PANEL_Y + 130;
+const BTN_W = 200;
+const BTN_H = 36;
+const BTN_X = PANEL_X + (PANEL_W - BTN_W) / 2;
+const RESTART_BTN_Y = PANEL_Y + 180;
+const SCREENSHOT_BTN_Y = PANEL_Y + 230;
 
 export const SETTINGS_LAYOUT = {
   panelX: PANEL_X, panelY: PANEL_Y, panelW: PANEL_W, panelH: PANEL_H,
   sliderX: SLIDER_X, sliderW: SLIDER_W, sliderH: SLIDER_H,
   bgmSliderY: BGM_SLIDER_Y, seSliderY: SE_SLIDER_Y,
   closeX: PANEL_X + PANEL_W - 30, closeY: PANEL_Y + 10, closeSize: 20,
+  btnX: BTN_X, btnW: BTN_W, btnH: BTN_H,
+  restartBtnY: RESTART_BTN_Y, screenshotBtnY: SCREENSHOT_BTN_Y,
 };
 
 function drawSettingsButton(ctx: CanvasRenderingContext2D): void {
@@ -335,6 +342,29 @@ export function drawSettingsPanel(ctx: CanvasRenderingContext2D, bgmVol: number,
 
   // SE slider
   drawSlider(ctx, 'SE', SLIDER_X, SE_SLIDER_Y, SLIDER_W, SLIDER_H, seVol);
+
+  // Restart button
+  drawButton(ctx, 'やり直す', BTN_X, RESTART_BTN_Y, BTN_W, BTN_H, '#e74c3c');
+
+  // Screenshot button
+  drawButton(ctx, 'スクリーンショット', BTN_X, SCREENSHOT_BTN_Y, BTN_W, BTN_H, '#3498db');
+}
+
+function drawButton(
+  ctx: CanvasRenderingContext2D,
+  label: string, x: number, y: number, w: number, h: number, color: string,
+): void {
+  const r = 8;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, r);
+  ctx.fill();
+
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = 'bold 15px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(label, x + w / 2, y + h / 2);
 }
 
 function drawSlider(
