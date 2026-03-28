@@ -234,6 +234,151 @@ function drawCatFace(ctx: CanvasRenderingContext2D, level: number, radius: numbe
   }
 }
 
+// Settings gear button position
+export const SETTINGS_BUTTON = { x: GAME_WIDTH - 30, y: GAME_HEIGHT - 30, radius: 16 };
+
+// Settings panel layout
+const PANEL_W = 280;
+const PANEL_H = 200;
+const PANEL_X = (GAME_WIDTH - PANEL_W) / 2;
+const PANEL_Y = (GAME_HEIGHT - PANEL_H) / 2;
+const SLIDER_X = PANEL_X + 30;
+const SLIDER_W = PANEL_W - 60;
+const SLIDER_H = 8;
+const BGM_SLIDER_Y = PANEL_Y + 80;
+const SE_SLIDER_Y = PANEL_Y + 130;
+
+export const SETTINGS_LAYOUT = {
+  panelX: PANEL_X, panelY: PANEL_Y, panelW: PANEL_W, panelH: PANEL_H,
+  sliderX: SLIDER_X, sliderW: SLIDER_W, sliderH: SLIDER_H,
+  bgmSliderY: BGM_SLIDER_Y, seSliderY: SE_SLIDER_Y,
+  closeX: PANEL_X + PANEL_W - 30, closeY: PANEL_Y + 10, closeSize: 20,
+};
+
+function drawSettingsButton(ctx: CanvasRenderingContext2D): void {
+  const { x, y, radius } = SETTINGS_BUTTON;
+  // Gear icon
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.fillStyle = '#FFFFFF66';
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Gear teeth
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.lineWidth = 2;
+  const teethCount = 6;
+  const innerR = 5;
+  const outerR = 10;
+  for (let i = 0; i < teethCount; i++) {
+    const angle = (Math.PI * 2 * i) / teethCount;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(angle) * innerR, Math.sin(angle) * innerR);
+    ctx.lineTo(Math.cos(angle) * outerR, Math.sin(angle) * outerR);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.arc(0, 0, 6, 0, Math.PI * 2);
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+}
+
+export function drawSettingsPanel(ctx: CanvasRenderingContext2D, bgmVol: number, seVol: number): void {
+  // Dim background
+  ctx.fillStyle = '#000000AA';
+  ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+
+  // Panel
+  ctx.fillStyle = '#2a2a4e';
+  ctx.strokeStyle = '#FFD700';
+  ctx.lineWidth = 2;
+  const r = 12;
+  ctx.beginPath();
+  ctx.moveTo(PANEL_X + r, PANEL_Y);
+  ctx.lineTo(PANEL_X + PANEL_W - r, PANEL_Y);
+  ctx.arcTo(PANEL_X + PANEL_W, PANEL_Y, PANEL_X + PANEL_W, PANEL_Y + r, r);
+  ctx.lineTo(PANEL_X + PANEL_W, PANEL_Y + PANEL_H - r);
+  ctx.arcTo(PANEL_X + PANEL_W, PANEL_Y + PANEL_H, PANEL_X + PANEL_W - r, PANEL_Y + PANEL_H, r);
+  ctx.lineTo(PANEL_X + r, PANEL_Y + PANEL_H);
+  ctx.arcTo(PANEL_X, PANEL_Y + PANEL_H, PANEL_X, PANEL_Y + PANEL_H - r, r);
+  ctx.lineTo(PANEL_X, PANEL_Y + r);
+  ctx.arcTo(PANEL_X, PANEL_Y, PANEL_X + r, PANEL_Y, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Title
+  ctx.fillStyle = '#FFD700';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Settings', GAME_WIDTH / 2, PANEL_Y + 30);
+
+  // Close button (x)
+  const { closeX, closeY, closeSize } = SETTINGS_LAYOUT;
+  ctx.strokeStyle = '#FFFFFF';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(closeX, closeY);
+  ctx.lineTo(closeX + closeSize, closeY + closeSize);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(closeX + closeSize, closeY);
+  ctx.lineTo(closeX, closeY + closeSize);
+  ctx.stroke();
+
+  // BGM slider
+  drawSlider(ctx, 'BGM', SLIDER_X, BGM_SLIDER_Y, SLIDER_W, SLIDER_H, bgmVol);
+
+  // SE slider
+  drawSlider(ctx, 'SE', SLIDER_X, SE_SLIDER_Y, SLIDER_W, SLIDER_H, seVol);
+}
+
+function drawSlider(
+  ctx: CanvasRenderingContext2D,
+  label: string, x: number, y: number, w: number, h: number, value: number,
+): void {
+  // Label
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font = '16px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(label, x, y - 6);
+
+  // Percentage
+  ctx.textAlign = 'right';
+  ctx.fillText(`${Math.round(value * 100)}%`, x + w, y - 6);
+
+  // Track
+  ctx.fillStyle = '#555577';
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, h / 2);
+  ctx.fill();
+
+  // Filled portion
+  const filledW = w * value;
+  if (filledW > 0) {
+    ctx.fillStyle = '#FFD700';
+    ctx.beginPath();
+    ctx.roundRect(x, y, filledW, h, h / 2);
+    ctx.fill();
+  }
+
+  // Thumb
+  const thumbX = x + filledW;
+  const thumbR = h + 2;
+  ctx.fillStyle = '#FFFFFF';
+  ctx.beginPath();
+  ctx.arc(thumbX, y + h / 2, thumbR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#FFD700';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
 export function render(
   ctx: CanvasRenderingContext2D,
   bodies: Matter.Body[],
@@ -244,6 +389,9 @@ export function render(
   score: number,
   highScore: number,
   particles: Particle[],
+  settingsOpen: boolean,
+  bgmVol: number,
+  seVol: number,
 ): void {
   // Background
   ctx.fillStyle = '#1a1a2e';
@@ -346,9 +494,17 @@ export function render(
   drawCatFace(ctx, nextLevel, Math.min(nextCat.radius, 18));
   ctx.restore();
 
+  // Settings button
+  drawSettingsButton(ctx);
+
   // Game over overlay
   if (state === 'gameover') {
     drawGameOverScreen(ctx, score, highScore);
+  }
+
+  // Settings panel (drawn on top of everything)
+  if (settingsOpen) {
+    drawSettingsPanel(ctx, bgmVol, seVol);
   }
 }
 

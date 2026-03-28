@@ -1,10 +1,10 @@
-import { CATS, DROP_Y, DROP_COOLDOWN_MS, MAX_DROP_LEVEL, DEATH_LINE_Y, DEATH_GRACE_FRAMES, CONTAINER_X, CONTAINER_WIDTH } from './constants';
+import { CATS, DROP_Y, DROP_COOLDOWN_MS, MAX_DROP_LEVEL, DEATH_LINE_Y, DEATH_GRACE_FRAMES, GAME_WIDTH, GAME_HEIGHT } from './constants';
 import { createCat } from './cats';
 import { initPhysics, stepPhysics, addBody, getAllBodies, onMerge, clearCats, type MergeEvent } from './physics';
 import { initInput, consumeDrop, getCursorX } from './input';
-import { createCanvas, render } from './renderer';
+import { createCanvas, render, SETTINGS_BUTTON, SETTINGS_LAYOUT } from './renderer';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
-import { playMeow, playGameOver, ensureAudioReady } from './sound';
+import { playMeow, playGameOver, ensureAudioReady, startBgm, stopBgm, getBgmVolume, getSeVolume, setBgmVolume, setSeVolume } from './sound';
 
 export interface Particle {
   x: number;
@@ -28,6 +28,8 @@ let canvas: HTMLCanvasElement;
 let ctx: CanvasRenderingContext2D;
 let shakeOffset = 0;
 let shakeDecay = 0;
+let settingsOpen = false;
+let draggingSlider: 'bgm' | 'se' | null = null;
 
 function pickLevel(): number {
   const weights = [35, 25, 20, 12, 8];
@@ -87,42 +89,166 @@ function startGame(): void {
   currentLevel = pickLevel();
   nextLevel = pickLevel();
   lastDropTime = 0;
+  startBgm();
+}
+
+// Convert canvas client coordinates to game coordinates
+function canvasToGame(clientX: number, clientY: number): { x: number; y: number } {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: ((clientX - rect.left) / rect.width) * GAME_WIDTH,
+    y: ((clientY - rect.top) / rect.height) * GAME_HEIGHT,
+  };
+}
+
+function isInSettingsButton(gx: number, gy: number): boolean {
+  const dx = gx - SETTINGS_BUTTON.x;
+  const dy = gy - SETTINGS_BUTTON.y;
+  return dx * dx + dy * dy <= SETTINGS_BUTTON.radius * SETTINGS_BUTTON.radius;
+}
+
+function isInCloseButton(gx: number, gy: number): boolean {
+  const { closeX, closeY, closeSize } = SETTINGS_LAYOUT;
+  return gx >= closeX && gx <= closeX + closeSize && gy >= closeY && gy <= closeY + closeSize;
+}
+
+function hitSlider(gx: number, gy: number): 'bgm' | 'se' | null {
+  const { sliderX, sliderW, bgmSliderY, seSliderY, sliderH } = SETTINGS_LAYOUT;
+  const margin = 14;
+  if (gx >= sliderX - margin && gx <= sliderX + sliderW + margin) {
+    if (gy >= bgmSliderY - margin && gy <= bgmSliderY + sliderH + margin) return 'bgm';
+    if (gy >= seSliderY - margin && gy <= seSliderY + sliderH + margin) return 'se';
+  }
+  return null;
+}
+
+function updateSliderValue(gx: number): void {
+  const { sliderX, sliderW } = SETTINGS_LAYOUT;
+  const value = Math.max(0, Math.min(1, (gx - sliderX) / sliderW));
+  if (draggingSlider === 'bgm') {
+    setBgmVolume(value);
+  } else if (draggingSlider === 'se') {
+    setSeVolume(value);
+  }
+}
+
+function setupSettingsInput(): void {
+  const handleDown = (clientX: number, clientY: number) => {
+    const { x: gx, y: gy } = canvasToGame(clientX, clientY);
+
+    if (settingsOpen) {
+      // Close button
+      if (isInCloseButton(gx, gy)) {
+        settingsOpen = false;
+        return true;
+      }
+      // Slider drag start
+      const slider = hitSlider(gx, gy);
+      if (slider) {
+        draggingSlider = slider;
+        updateSliderValue(gx);
+        return true;
+      }
+      // Click outside panel closes it
+      const { panelX, panelY, panelW, panelH } = SETTINGS_LAYOUT;
+      if (gx < panelX || gx > panelX + panelW || gy < panelY || gy > panelY + panelH) {
+        settingsOpen = false;
+        return true;
+      }
+      return true; // Consume all clicks when settings open
+    }
+
+    // Settings button
+    if (isInSettingsButton(gx, gy)) {
+      settingsOpen = true;
+      return true;
+    }
+    return false;
+  };
+
+  const handleMove = (clientX: number, _clientY: number) => {
+    if (draggingSlider) {
+      const { x: gx } = canvasToGame(clientX, _clientY);
+      updateSliderValue(gx);
+    }
+  };
+
+  const handleUp = () => {
+    draggingSlider = null;
+  };
+
+  canvas.addEventListener('mousedown', (e) => {
+    if (handleDown(e.clientX, e.clientY)) {
+      e.stopPropagation();
+    }
+  }, true);
+
+  canvas.addEventListener('mousemove', (e) => {
+    handleMove(e.clientX, e.clientY);
+  });
+
+  canvas.addEventListener('mouseup', handleUp);
+
+  canvas.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    if (handleDown(touch.clientX, touch.clientY)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, { capture: true, passive: false });
+
+  canvas.addEventListener('touchmove', (e) => {
+    if (draggingSlider) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      handleMove(touch.clientX, touch.clientY);
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', handleUp);
 }
 
 function gameLoop(timestamp: number): void {
   requestAnimationFrame(gameLoop);
 
+  const bgmVol = getBgmVolume();
+  const seVol = getSeVolume();
+
   if (state === 'title') {
-    if (consumeDrop()) {
+    if (!settingsOpen && consumeDrop()) {
       startGame();
       return;
     }
     const bodies = getAllBodies();
-    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles);
+    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, settingsOpen, bgmVol, seVol);
     return;
   }
 
   if (state === 'gameover') {
-    if (consumeDrop()) {
+    if (!settingsOpen && consumeDrop()) {
       startGame();
       return;
     }
     const bodies = getAllBodies();
-    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles);
+    render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, settingsOpen, bgmVol, seVol);
     return;
   }
 
   // Playing state
-  const dropped = consumeDrop();
-  const now = timestamp;
+  if (!settingsOpen) {
+    const dropped = consumeDrop();
+    const now = timestamp;
 
-  if (dropped && now - lastDropTime > DROP_COOLDOWN_MS) {
-    const x = getCursorX();
-    const cat = createCat(currentLevel, x, DROP_Y);
-    addBody(cat);
-    lastDropTime = now;
-    currentLevel = nextLevel;
-    nextLevel = pickLevel();
+    if (dropped && now - lastDropTime > DROP_COOLDOWN_MS) {
+      const x = getCursorX();
+      const cat = createCat(currentLevel, x, DROP_Y);
+      addBody(cat);
+      lastDropTime = now;
+      currentLevel = nextLevel;
+      nextLevel = pickLevel();
+    }
+  } else {
+    consumeDrop(); // Discard drops while settings open
   }
 
   stepPhysics(1000 / 60);
@@ -142,6 +268,7 @@ function gameLoop(timestamp: number): void {
         state = 'gameover';
         saveHighScore();
         playGameOver();
+        stopBgm();
         break;
       }
     } else {
@@ -160,7 +287,7 @@ function gameLoop(timestamp: number): void {
     shakeOffset *= shakeDecay;
   }
 
-  render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles);
+  render(ctx, bodies, state, getCursorX(), currentLevel, nextLevel, getScore(), getHighScore(), particles, settingsOpen, bgmVol, seVol);
 
   if (shakeOffset > 0.1) {
     ctx.restore();
@@ -177,10 +304,7 @@ export function initGame(): void {
   initPhysics();
   onMerge(handleMerge);
   initInput(canvas, () => CATS[currentLevel].radius);
-
-  // Initial cursor position
-  const initialX = CONTAINER_X + CONTAINER_WIDTH / 2;
-  void initialX;
+  setupSettingsInput();
 
   requestAnimationFrame(gameLoop);
 }
