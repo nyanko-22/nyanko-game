@@ -1,5 +1,6 @@
 import { el, materialIcon } from './shared';
 import { CATS } from '../constants';
+import { drawCatFace } from '../renderer';
 
 const HUD_CONTAINER_ID = 'hud-container';
 
@@ -45,43 +46,13 @@ function buildHud(): HTMLDivElement {
 function drawNextCat(level: number): void {
   if (!nextCatCtx || !nextCatCanvas) return;
   const ctx = nextCatCtx;
-  const cat = CATS[level];
-  const radius = Math.min(cat.radius, 16);
   const size = nextCatCanvas.width;
+  const radius = size / 2 - 2;
 
   ctx.clearRect(0, 0, size, size);
   ctx.save();
   ctx.translate(size / 2, size / 2);
-
-  // Draw cat body
-  ctx.beginPath();
-  ctx.arc(0, 0, radius, 0, Math.PI * 2);
-  ctx.fillStyle = cat.color;
-  ctx.fill();
-  ctx.strokeStyle = cat.darkColor;
-  ctx.lineWidth = Math.max(1, radius * 0.06);
-  ctx.stroke();
-
-  // Eyes
-  const eyeOffsetX = radius * 0.3;
-  const eyeOffsetY = -radius * 0.1;
-  const eyeWidth = radius * 0.18;
-  const eyeHeight = radius * 0.22;
-  ctx.fillStyle = '#FFFFFF';
-  ctx.beginPath();
-  ctx.ellipse(-eyeOffsetX, eyeOffsetY, eyeWidth, eyeHeight, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(eyeOffsetX, eyeOffsetY, eyeWidth, eyeHeight, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = '#333333';
-  ctx.beginPath();
-  ctx.ellipse(-eyeOffsetX, eyeOffsetY, eyeWidth * 0.55, eyeHeight * 0.7, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(eyeOffsetX, eyeOffsetY, eyeWidth * 0.55, eyeHeight * 0.7, 0, 0, Math.PI * 2);
-  ctx.fill();
-
+  drawCatFace(ctx, level, radius);
   ctx.restore();
 }
 
