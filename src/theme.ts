@@ -24,6 +24,10 @@ export function setTheme(t: ThemeName): void {
   listeners.forEach(fn => fn(t));
 }
 
+export function getBgPatternUrl(): string {
+  return current === 'pastel' ? bgPastelUrl : bgDarkUrl;
+}
+
 export function onThemeChange(fn: (t: ThemeName) => void): void {
   listeners.push(fn);
 }

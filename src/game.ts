@@ -13,6 +13,7 @@ import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './s
 import { playMeow, playGameOver, playDrop, ensureAudioReady, startBgm, stopBgm } from './sound';
 import { submitScore } from './firebase';
 import { loadRanking, getRankingData, resetRanking, setCurrentPlayer } from './ranking';
+import { getTheme, getBgPatternUrl } from './theme';
 
 export interface Particle {
   x: number;
@@ -149,26 +150,50 @@ function takeScreenshot(): void {
   const bodies = getAllBodies();
   render(ctx, bodies, state, getCursorX(), currentLevel, particles);
 
-  // Use an offscreen canvas so the download has a solid background
+  // Use an offscreen canvas to composite background + SVG pattern + game canvas
   // (the game canvas is transparent — CSS background never appears in toBlob)
   const offscreen = document.createElement('canvas');
   offscreen.width = canvas.width;
   offscreen.height = canvas.height;
   const offCtx = offscreen.getContext('2d')!;
+
+  function downloadOffscreen(): void {
+    offscreen.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nyanko-game-${getScore()}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  }
+
   const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim() || '#fafaf5';
   offCtx.fillStyle = bgColor;
   offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
-  offCtx.drawImage(canvas, 0, 0);
 
-  offscreen.toBlob((blob) => {
-    if (!blob) return;
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `nyanko-game-${getScore()}.png`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }, 'image/png');
+  const bgImg = new Image();
+  bgImg.onload = () => {
+    if (getTheme() === 'dark') {
+      // cover: scale to fill, centered
+      const scale = Math.max(offscreen.width / bgImg.width, offscreen.height / bgImg.height);
+      const dw = bgImg.width * scale;
+      const dh = bgImg.height * scale;
+      offCtx.drawImage(bgImg, (offscreen.width - dw) / 2, (offscreen.height - dh) / 2, dw, dh);
+    } else {
+      // repeat tile
+      const pat = offCtx.createPattern(bgImg, 'repeat');
+      if (pat) { offCtx.fillStyle = pat; offCtx.fillRect(0, 0, offscreen.width, offscreen.height); }
+    }
+    offCtx.drawImage(canvas, 0, 0);
+    downloadOffscreen();
+  };
+  bgImg.onerror = () => {
+    offCtx.drawImage(canvas, 0, 0);
+    downloadOffscreen();
+  };
+  bgImg.src = getBgPatternUrl();
 }
 
 
