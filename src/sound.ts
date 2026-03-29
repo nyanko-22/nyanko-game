@@ -25,11 +25,13 @@ const MERGE_LEVEL_FILES: Record<number, string> = {
 };
 
 const BGM_FILE = 'sounds/bgm.mp3';
+const DROP_FILE = 'sounds/drop.mp3';
 
 const buffers: (AudioBuffer | null)[] = MEOW_FILES.map(() => null);
 const gameoverBuffers: (AudioBuffer | null)[] = GAMEOVER_FILES.map(() => null);
 const mergeLevelBuffers: Record<number, AudioBuffer | null> = {};
 let bgmBuffer: AudioBuffer | null = null;
+let dropBuffer: AudioBuffer | null = null;
 let bgmSource: AudioBufferSourceNode | null = null;
 let bgmGainNode: GainNode | null = null;
 let seGainNode: GainNode | null = null;
@@ -122,6 +124,16 @@ async function loadSounds(): Promise<void> {
         // BGM loading failed silently
       }
     })(),
+    (async () => {
+      try {
+        const res = await fetch(`${import.meta.env.BASE_URL}${DROP_FILE}`);
+        if (!res.ok) return;
+        const data = await res.arrayBuffer();
+        dropBuffer = await ctx.decodeAudioData(data);
+      } catch {
+        // Drop sound loading failed silently
+      }
+    })(),
   ]);
 }
 
@@ -195,6 +207,16 @@ export function playMeow(mergeFromLevel: number, newLevel: number): void {
   const rate = 1.3 - newLevel * 0.08;
   source.playbackRate.value = Math.max(0.5, Math.min(1.5, rate));
 
+  source.connect(seGainNode!);
+  source.start();
+}
+
+export function playDrop(): void {
+  if (!dropBuffer) return;
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') ctx.resume();
+  const source = ctx.createBufferSource();
+  source.buffer = dropBuffer;
   source.connect(seGainNode!);
   source.start();
 }

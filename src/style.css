@@ -26,7 +26,7 @@ html, body {
   position: relative;
   background-image: var(--bg-pattern-url, none), var(--bg-radial-overlay, none);
   background-size: var(--bg-pattern-size, 160px 160px), 100% 100%;
-  background-repeat: repeat;
+  background-repeat: var(--bg-pattern-repeat, repeat);
   background-position: center;
 }
 
@@ -79,6 +79,18 @@ html, body {
 .screen--visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Dark theme: main screens show the same SVG pattern as #app (canvas hidden behind solid bg) */
+[data-theme="dark"] #home-screen,
+[data-theme="dark"] #ranking-screen,
+[data-theme="dark"] #settings-screen,
+[data-theme="dark"] #nickname-screen {
+  background-color: var(--color-background) !important;
+  background-image: var(--bg-pattern-url, none), var(--bg-radial-overlay, none) !important;
+  background-size: cover, 100% 100% !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
 }
 
 /* Constrain screen content to game dimensions */
@@ -687,8 +699,8 @@ html, body {
   -webkit-backdrop-filter: blur(12px);
   border: 1.5px solid var(--color-primary);
   border-radius: 16px;
-  padding: 14px 16px;
-  margin-bottom: 12px;
+  padding: 16px;
+  margin-top: 12px;
 }
 
 .ranking-your-stats-row {
@@ -701,12 +713,12 @@ html, body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   flex: 1;
 }
 
 .ranking-your-stat-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--color-outline);
   text-transform: uppercase;
@@ -715,7 +727,7 @@ html, body {
 
 .ranking-your-stat-value {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 16px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--color-primary);
 }

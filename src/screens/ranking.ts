@@ -53,7 +53,7 @@ function buildScreen(): HTMLDivElement {
   playAgainBtn.addEventListener('click', () => onPlayAgainCallback?.());
   footer.appendChild(playAgainBtn);
 
-  inner.append(header, yourStatsEl, listEl, footer);
+  inner.append(header, listEl, yourStatsEl, footer);
   screen.appendChild(inner);
 
   return screen;
@@ -80,23 +80,17 @@ function renderYourStats(data: RankingRenderData): void {
 
   const rankBlock = el('div', { className: 'ranking-your-stat-block' });
   rankBlock.append(
-    el('div', { className: 'ranking-your-stat-label', textContent: 'あなたの順位' }),
+    el('div', { className: 'ranking-your-stat-label', textContent: 'Your Rank' }),
     el('div', { className: 'ranking-your-stat-value', textContent: rankStr }),
-  );
-
-  const scoreBlock = el('div', { className: 'ranking-your-stat-block' });
-  scoreBlock.append(
-    el('div', { className: 'ranking-your-stat-label', textContent: 'スコア' }),
-    el('div', { className: 'ranking-your-stat-value', textContent: `${score.toLocaleString()} pts` }),
   );
 
   const bestBlock = el('div', { className: 'ranking-your-stat-block' });
   bestBlock.append(
-    el('div', { className: 'ranking-your-stat-label', textContent: 'ハイスコア' }),
+    el('div', { className: 'ranking-your-stat-label', textContent: 'High Score' }),
     el('div', { className: 'ranking-your-stat-value', textContent: highStr }),
   );
 
-  row.append(rankBlock, scoreBlock, bestBlock);
+  row.append(rankBlock, bestBlock);
   yourStatsEl.appendChild(row);
 }
 

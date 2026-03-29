@@ -1,132 +1,166 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400">
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844">
   <!--
-    Dark Cosmic cat pattern — matches Stitch reference image.
-    Elements: geometric cat face outlines + paw prints + constellation.
-    All in very low-contrast dark blue-gray on transparent background.
-    Base background color comes from CSS --color-background.
+    Dark Cosmic cat pattern: filled cat body silhouettes, stars, moons, constellations.
+    All elements in lavender on transparent background. Displayed as no-repeat/cover.
   -->
 
-  <!-- CAT FACE A — top-left, medium size, wide style -->
-  <g transform="translate(68, 88)" opacity="0.28">
-    <path d="M-32,22 L-32,-8 L-42,-22 L-24,-14 L0,-20 L24,-14 L42,-22 L32,-8 L32,22 Q30,34 0,34 Q-30,34 -32,22 Z"
-      fill="none" stroke="#7880aa" stroke-width="1.4" stroke-linejoin="round"/>
-    <!-- Left eye (closed curve) -->
-    <path d="M-20,4 Q-14,0 -8,4" fill="none" stroke="#7880aa" stroke-width="1.2" stroke-linecap="round"/>
-    <!-- Right eye -->
-    <path d="M8,4 Q14,0 20,4" fill="none" stroke="#7880aa" stroke-width="1.2" stroke-linecap="round"/>
-    <!-- Nose -->
-    <path d="M0,12 L-3,16 L3,16 Z" fill="#7880aa" opacity="0.6"/>
-    <!-- Whiskers left -->
-    <line x1="-4" y1="14" x2="-28" y2="11" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
-    <line x1="-4" y1="16" x2="-28" y2="18" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
-    <!-- Whiskers right -->
-    <line x1="4" y1="14" x2="28" y2="11" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
-    <line x1="4" y1="16" x2="28" y2="18" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
+  <!-- WALKING CAT — top-left, facing right -->
+  <g transform="translate(52, 68)" fill="#9095c8" opacity="0.34">
+    <!-- Body: horizontal ellipse -->
+    <ellipse cx="0" cy="0" rx="32" ry="18"/>
+    <!-- Head -->
+    <circle cx="35" cy="-13" r="16"/>
+    <!-- Left ear -->
+    <polygon points="27,-26 33,-43 41,-27"/>
+    <!-- Right ear -->
+    <polygon points="38,-27 45,-43 51,-27"/>
+    <!-- Tail: thick arc going up-left -->
+    <path d="M-29,-5 Q-52,-12 -56,4 Q-59,14 -49,18" fill="none" stroke="#9095c8" stroke-width="7" stroke-linecap="round"/>
+    <!-- Front leg (forward/down) -->
+    <rect x="22" y="15" width="9" height="21" rx="4.5"/>
+    <!-- Front leg (back/up slight) -->
+    <rect x="32" y="13" width="9" height="19" rx="4.5"/>
+    <!-- Back leg (down) -->
+    <rect x="-22" y="15" width="9" height="21" rx="4.5"/>
+    <!-- Back leg (raised) -->
+    <rect x="-33" y="12" width="9" height="17" rx="4.5"/>
   </g>
 
-  <!-- CAT FACE B — top-right, squinting/sleeping style -->
-  <g transform="translate(316, 72)" opacity="0.24">
-    <path d="M-26,18 L-26,-6 L-34,-18 L-20,-12 L0,-16 L20,-12 L34,-18 L26,-6 L26,18 Q24,28 0,28 Q-24,28 -26,18 Z"
-      fill="none" stroke="#7880aa" stroke-width="1.3" stroke-linejoin="round"/>
-    <!-- Both eyes closed with longer curve -->
-    <path d="M-18,2 Q-12,-2 -6,2" fill="none" stroke="#7880aa" stroke-width="1.1" stroke-linecap="round"/>
-    <path d="M6,2 Q12,-2 18,2" fill="none" stroke="#7880aa" stroke-width="1.1" stroke-linecap="round"/>
-    <!-- Nose dot -->
-    <circle cx="0" cy="10" r="1.5" fill="#7880aa" opacity="0.6"/>
-    <!-- Whiskers -->
-    <line x1="-3" y1="10" x2="-22" y2="7" stroke="#7880aa" stroke-width="0.7" stroke-linecap="round"/>
-    <line x1="-3" y1="12" x2="-22" y2="14" stroke="#7880aa" stroke-width="0.7" stroke-linecap="round"/>
-    <line x1="3" y1="10" x2="22" y2="7" stroke="#7880aa" stroke-width="0.7" stroke-linecap="round"/>
-    <line x1="3" y1="12" x2="22" y2="14" stroke="#7880aa" stroke-width="0.7" stroke-linecap="round"/>
+  <!-- WALKING CAT — top-right, facing left (mirrored) -->
+  <g transform="translate(338, 85) scale(-1, 1)" fill="#9095c8" opacity="0.30">
+    <ellipse cx="0" cy="0" rx="32" ry="18"/>
+    <circle cx="35" cy="-13" r="16"/>
+    <polygon points="27,-26 33,-43 41,-27"/>
+    <polygon points="38,-27 45,-43 51,-27"/>
+    <path d="M-29,-5 Q-52,-12 -56,4 Q-59,14 -49,18" fill="none" stroke="#9095c8" stroke-width="7" stroke-linecap="round"/>
+    <rect x="22" y="15" width="9" height="21" rx="4.5"/>
+    <rect x="32" y="13" width="9" height="19" rx="4.5"/>
+    <rect x="-22" y="15" width="9" height="21" rx="4.5"/>
+    <rect x="-33" y="12" width="9" height="17" rx="4.5"/>
   </g>
 
-  <!-- CAT FACE C — right-center, no ears visible angle -->
-  <g transform="translate(348, 220)" opacity="0.22">
-    <path d="M-22,16 L-22,-5 L-28,-16 L-16,-10 L0,-14 L16,-10 L28,-16 L22,-5 L22,16 Q20,24 0,24 Q-20,24 -22,16 Z"
-      fill="none" stroke="#7880aa" stroke-width="1.2" stroke-linejoin="round"/>
-    <path d="M-14,2 Q-9,-1 -4,2" fill="none" stroke="#7880aa" stroke-width="1" stroke-linecap="round"/>
-    <path d="M4,2 Q9,-1 14,2" fill="none" stroke="#7880aa" stroke-width="1" stroke-linecap="round"/>
-    <circle cx="0" cy="8" r="1.2" fill="#7880aa" opacity="0.5"/>
-    <line x1="-2" y1="8" x2="-18" y2="6" stroke="#7880aa" stroke-width="0.7" stroke-linecap="round"/>
-    <line x1="2" y1="8" x2="18" y2="6" stroke="#7880aa" stroke-width="0.7" stroke-linecap="round"/>
+  <!-- SITTING CAT — bottom-left, facing right -->
+  <g transform="translate(58, 762)" fill="#9095c8" opacity="0.32">
+    <!-- Body: rounder ellipse -->
+    <ellipse cx="0" cy="10" rx="24" ry="22"/>
+    <!-- Head -->
+    <circle cx="14" cy="-15" r="17"/>
+    <!-- Left ear -->
+    <polygon points="5,-29 11,-47 18,-30"/>
+    <!-- Right ear -->
+    <polygon points="18,-30 25,-47 30,-29"/>
+    <!-- Tail: wraps around bottom-left -->
+    <path d="M-21,22 Q-40,42 -26,54 Q-12,62 2,52" fill="none" stroke="#9095c8" stroke-width="8" stroke-linecap="round"/>
   </g>
 
-  <!-- CAT FACE D — bottom-right, large -->
-  <g transform="translate(312, 340)" opacity="0.26">
-    <path d="M-30,20 L-30,-7 L-38,-20 L-22,-13 L0,-18 L22,-13 L38,-20 L30,-7 L30,20 Q28,30 0,30 Q-28,30 -30,20 Z"
-      fill="none" stroke="#7880aa" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M-18,3 Q-12,-1 -6,3" fill="none" stroke="#7880aa" stroke-width="1.2" stroke-linecap="round"/>
-    <path d="M6,3 Q12,-1 18,3" fill="none" stroke="#7880aa" stroke-width="1.2" stroke-linecap="round"/>
-    <path d="M0,11 L-3,15 L3,15 Z" fill="#7880aa" opacity="0.55"/>
-    <line x1="-3" y1="13" x2="-26" y2="10" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
-    <line x1="-3" y1="15" x2="-26" y2="17" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
-    <line x1="3" y1="13" x2="26" y2="10" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
-    <line x1="3" y1="15" x2="26" y2="17" stroke="#7880aa" stroke-width="0.8" stroke-linecap="round"/>
+  <!-- SITTING CAT — bottom-right, facing left (mirrored) -->
+  <g transform="translate(332, 772) scale(-1, 1)" fill="#9095c8" opacity="0.28">
+    <ellipse cx="0" cy="10" rx="24" ry="22"/>
+    <circle cx="14" cy="-15" r="17"/>
+    <polygon points="5,-29 11,-47 18,-30"/>
+    <polygon points="18,-30 25,-47 30,-29"/>
+    <path d="M-21,22 Q-40,42 -26,54 Q-12,62 2,52" fill="none" stroke="#9095c8" stroke-width="8" stroke-linecap="round"/>
   </g>
 
-  <!-- PAW PRINT #1 — left side -->
-  <g transform="translate(42, 248)" opacity="0.30" fill="#7880aa">
-    <ellipse cx="0" cy="0" rx="11" ry="9"/>
-    <ellipse cx="-12" cy="-12" rx="5" ry="4"/>
-    <ellipse cx="-4" cy="-15" rx="5" ry="4"/>
-    <ellipse cx="5" cy="-15" rx="5" ry="4"/>
-    <ellipse cx="13" cy="-12" rx="5" ry="4"/>
+  <!-- 4-POINTED STARS  (M 0,-r L s,-s L r,0 L s,s L 0,r L -s,s L -r,0 L -s,-s Z, s≈r*0.35) -->
+
+  <!-- Large star — top center -->
+  <path transform="translate(195, 32)" fill="#9095c8" opacity="0.44"
+    d="M 0,-12 L 4.2,-4.2 L 12,0 L 4.2,4.2 L 0,12 L -4.2,4.2 L -12,0 L -4.2,-4.2 Z"/>
+
+  <!-- Star — left mid-upper -->
+  <path transform="translate(22, 275)" fill="#9095c8" opacity="0.38"
+    d="M 0,-10 L 3.5,-3.5 L 10,0 L 3.5,3.5 L 0,10 L -3.5,3.5 L -10,0 L -3.5,-3.5 Z"/>
+
+  <!-- Star — right mid-upper -->
+  <path transform="translate(368, 315)" fill="#9095c8" opacity="0.34"
+    d="M 0,-9 L 3.2,-3.2 L 9,0 L 3.2,3.2 L 0,9 L -3.2,3.2 L -9,0 L -3.2,-3.2 Z"/>
+
+  <!-- Star — upper right area -->
+  <path transform="translate(308, 138)" fill="#9095c8" opacity="0.32"
+    d="M 0,-8 L 2.8,-2.8 L 8,0 L 2.8,2.8 L 0,8 L -2.8,2.8 L -8,0 L -2.8,-2.8 Z"/>
+
+  <!-- Star — upper left area -->
+  <path transform="translate(78, 155)" fill="#9095c8" opacity="0.30"
+    d="M 0,-7 L 2.5,-2.5 L 7,0 L 2.5,2.5 L 0,7 L -2.5,2.5 L -7,0 L -2.5,-2.5 Z"/>
+
+  <!-- Star — lower left -->
+  <path transform="translate(28, 618)" fill="#9095c8" opacity="0.30"
+    d="M 0,-9 L 3.2,-3.2 L 9,0 L 3.2,3.2 L 0,9 L -3.2,3.2 L -9,0 L -3.2,-3.2 Z"/>
+
+  <!-- Star — lower right -->
+  <path transform="translate(362, 575)" fill="#9095c8" opacity="0.28"
+    d="M 0,-8 L 2.8,-2.8 L 8,0 L 2.8,2.8 L 0,8 L -2.8,2.8 L -8,0 L -2.8,-2.8 Z"/>
+
+  <!-- Star — small, left edge mid -->
+  <path transform="translate(15, 445)" fill="#9095c8" opacity="0.26"
+    d="M 0,-6 L 2.1,-2.1 L 6,0 L 2.1,2.1 L 0,6 L -2.1,2.1 L -6,0 L -2.1,-2.1 Z"/>
+
+  <!-- CRESCENT MOONS (even-odd fill: outer circle minus inner offset circle) -->
+
+  <!-- Moon — upper right -->
+  <g transform="translate(360, 198)" fill="#9095c8" opacity="0.36" fill-rule="evenodd">
+    <circle cx="0" cy="0" r="19"/>
+    <circle cx="9" cy="-4" r="15"/>
   </g>
 
-  <!-- PAW PRINT #2 — bottom center -->
-  <g transform="translate(178, 368)" opacity="0.26" fill="#7880aa">
-    <ellipse cx="0" cy="0" rx="9" ry="7.5"/>
-    <ellipse cx="-10" cy="-10" rx="4.5" ry="3.5"/>
-    <ellipse cx="-3" cy="-13" rx="4.5" ry="3.5"/>
-    <ellipse cx="5" cy="-13" rx="4.5" ry="3.5"/>
-    <ellipse cx="11" cy="-10" rx="4.5" ry="3.5"/>
+  <!-- Moon — left side lower -->
+  <g transform="translate(28, 508)" fill="#9095c8" opacity="0.32" fill-rule="evenodd">
+    <circle cx="0" cy="0" r="16"/>
+    <circle cx="-7" cy="-3" r="12"/>
   </g>
 
-  <!-- CONSTELLATION #1 — bottom-left pentagon/diamond shape -->
-  <g opacity="0.30">
-    <line x1="82" y1="310" x2="108" y2="288" stroke="#8890b8" stroke-width="0.9" stroke-dasharray="3,4"/>
-    <line x1="108" y1="288" x2="138" y2="296" stroke="#8890b8" stroke-width="0.9" stroke-dasharray="3,4"/>
-    <line x1="138" y1="296" x2="142" y2="326" stroke="#8890b8" stroke-width="0.9" stroke-dasharray="3,4"/>
-    <line x1="142" y1="326" x2="118" y2="342" stroke="#8890b8" stroke-width="0.9" stroke-dasharray="3,4"/>
-    <line x1="118" y1="342" x2="82" y2="310" stroke="#8890b8" stroke-width="0.9" stroke-dasharray="3,4"/>
-    <line x1="108" y1="288" x2="116" y2="268" stroke="#8890b8" stroke-width="0.9" stroke-dasharray="3,4"/>
-    <!-- Dots at vertices -->
-    <circle cx="82" cy="310" r="2.5" fill="#9098c0"/>
-    <circle cx="108" cy="288" r="2.5" fill="#9098c0"/>
-    <circle cx="138" cy="296" r="2.5" fill="#9098c0"/>
-    <circle cx="142" cy="326" r="2.5" fill="#9098c0"/>
-    <circle cx="118" cy="342" r="2.5" fill="#9098c0"/>
-    <circle cx="116" cy="268" r="2" fill="#9098c0"/>
+  <!-- Moon — bottom center (partial, near edge) -->
+  <g transform="translate(200, 836)" fill="#9095c8" opacity="0.26" fill-rule="evenodd">
+    <circle cx="0" cy="0" r="13"/>
+    <circle cx="6" cy="-2" r="10"/>
   </g>
 
-  <!-- CONSTELLATION #2 — top-center small cluster -->
-  <g opacity="0.24">
-    <line x1="185" y1="30" x2="202" y2="18" stroke="#8890b8" stroke-width="0.8" stroke-dasharray="2,4"/>
-    <line x1="202" y1="18" x2="220" y2="28" stroke="#8890b8" stroke-width="0.8" stroke-dasharray="2,4"/>
-    <line x1="202" y1="18" x2="208" y2="8" stroke="#8890b8" stroke-width="0.8" stroke-dasharray="2,4"/>
-    <circle cx="185" cy="30" r="2" fill="#9098c0"/>
-    <circle cx="202" cy="18" r="2" fill="#9098c0"/>
-    <circle cx="220" cy="28" r="2" fill="#9098c0"/>
-    <circle cx="208" cy="8" r="1.5" fill="#9098c0"/>
+  <!-- CONSTELLATION #1 — left side pentagon cluster -->
+  <g opacity="0.34" stroke="#9095c8" fill="#9095c8">
+    <line x1="82" y1="218" x2="108" y2="196" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="108" y1="196" x2="142" y2="206" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="142" y1="206" x2="150" y2="236" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="150" y1="236" x2="126" y2="252" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="126" y1="252" x2="82" y2="218" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <circle cx="82" cy="218" r="2.8"/>
+    <circle cx="108" cy="196" r="2.8"/>
+    <circle cx="142" cy="206" r="2.8"/>
+    <circle cx="150" cy="236" r="2.8"/>
+    <circle cx="126" cy="252" r="2.8"/>
+  </g>
+
+  <!-- CONSTELLATION #2 — right side diamond -->
+  <g opacity="0.30" stroke="#9095c8" fill="#9095c8">
+    <line x1="338" y1="428" x2="368" y2="408" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="368" y1="408" x2="382" y2="436" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="382" y1="436" x2="362" y2="460" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="362" y1="460" x2="336" y2="450" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <line x1="336" y1="450" x2="338" y2="428" stroke-width="0.9" stroke-dasharray="3,5"/>
+    <circle cx="338" cy="428" r="2.5"/>
+    <circle cx="368" cy="408" r="2.5"/>
+    <circle cx="382" cy="436" r="2.5"/>
+    <circle cx="362" cy="460" r="2.5"/>
+    <circle cx="336" cy="450" r="2.5"/>
   </g>
 
   <!-- Scattered tiny star dots -->
-  <g fill="#9098c0" opacity="0.28">
-    <circle cx="160" cy="75" r="1.2"/>
-    <circle cx="245" cy="50" r="1.0"/>
-    <circle cx="380" cy="115" r="1.2"/>
-    <circle cx="22" cy="175" r="1.0"/>
-    <circle cx="218" cy="158" r="1.6"/>
-    <circle cx="265" cy="205" r="1.0"/>
-    <circle cx="385" cy="260" r="1.2"/>
-    <circle cx="95" cy="390" r="1.0"/>
-    <circle cx="355" cy="385" r="1.2"/>
-    <circle cx="172" cy="282" r="1.0"/>
-    <circle cx="62" cy="148" r="1.2"/>
-    <circle cx="298" cy="148" r="1.0"/>
-    <circle cx="8" cy="52" r="1.2"/>
-    <circle cx="388" cy="48" r="1.0"/>
-    <circle cx="22" cy="320" r="1.2"/>
-    <circle cx="200" cy="200" r="1.8"/>
+  <g fill="#9095c8" opacity="0.32">
+    <circle cx="155" cy="44" r="1.5"/>
+    <circle cx="242" cy="56" r="1.2"/>
+    <circle cx="382" cy="128" r="1.5"/>
+    <circle cx="12" cy="192" r="1.2"/>
+    <circle cx="200" cy="138" r="1.8"/>
+    <circle cx="262" cy="192" r="1.2"/>
+    <circle cx="386" cy="268" r="1.5"/>
+    <circle cx="8" cy="358" r="1.2"/>
+    <circle cx="376" cy="498" r="1.5"/>
+    <circle cx="168" cy="302" r="1.2"/>
+    <circle cx="44" cy="678" r="1.5"/>
+    <circle cx="352" cy="698" r="1.2"/>
+    <circle cx="14" cy="78" r="1.5"/>
+    <circle cx="376" cy="64" r="1.2"/>
+    <circle cx="28" cy="748" r="1.5"/>
+    <circle cx="195" cy="200" r="1.8"/>
   </g>
 </svg>

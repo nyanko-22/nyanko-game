@@ -1,3 +1,6 @@
+import bgDarkUrl from './assets/bg-dark.svg?url';
+import bgPastelUrl from './assets/bg-pastel.svg?url';
+
 export type ThemeName = 'pastel' | 'dark';
 
 const STORAGE_KEY = 'nyanko-theme';
@@ -9,9 +12,8 @@ export function getTheme(): ThemeName {
 }
 
 function applyBgPattern(t: ThemeName): void {
-  const base = import.meta.env.BASE_URL;
-  const file = t === 'pastel' ? 'bg-pastel.svg' : 'bg-dark.svg';
-  document.documentElement.style.setProperty('--bg-pattern-url', `url('${base}${file}')`);
+  const url = t === 'pastel' ? bgPastelUrl : bgDarkUrl;
+  document.documentElement.style.setProperty('--bg-pattern-url', `url('${url}')`);
 }
 
 export function setTheme(t: ThemeName): void {

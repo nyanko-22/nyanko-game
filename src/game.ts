@@ -10,7 +10,7 @@ import { showGameOverScreen, hideGameOverScreen } from './screens/gameover';
 import { showNicknameScreen, hideNicknameScreen, getLastNickname } from './screens/nickname';
 import { initHud, updateHud, showHud, hideHud } from './screens/hud';
 import { addScore, getScore, resetScore, getHighScore, saveHighScore } from './score';
-import { playMeow, playGameOver, ensureAudioReady, startBgm, stopBgm } from './sound';
+import { playMeow, playGameOver, playDrop, ensureAudioReady, startBgm, stopBgm } from './sound';
 import { submitScore } from './firebase';
 import { loadRanking, getRankingData, resetRanking, setCurrentPlayer } from './ranking';
 
@@ -262,6 +262,7 @@ function gameLoop(timestamp: number): void {
       const x = getCursorX();
       const cat = createCat(currentLevel, x, DROP_Y);
       addBody(cat);
+      playDrop();
       lastDropTime = now;
       currentLevel = nextLevel;
       nextLevel = pickLevel();
