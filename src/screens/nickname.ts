@@ -16,7 +16,7 @@ function saveNickname(name: string): void {
 
 function buildScreen(defaultName: string): HTMLDivElement {
   screen = createScreen('nickname-screen');
-  screen.style.background = 'var(--color-background)';
+  screen.style.backgroundColor = 'var(--color-background)';
 
   const inner = el('div', { className: 'screen-inner nickname-inner' });
 

@@ -25,7 +25,7 @@ function clearEl(node: HTMLElement): void {
 
 function buildScreen(): HTMLDivElement {
   screen = createScreen('ranking-screen');
-  screen.style.background = 'var(--color-background)';
+  screen.style.backgroundColor = 'var(--color-background)';
 
   const inner = el('div', { className: 'screen-inner' });
 

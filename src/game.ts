@@ -149,7 +149,18 @@ function takeScreenshot(): void {
   const bodies = getAllBodies();
   render(ctx, bodies, state, getCursorX(), currentLevel, particles);
 
-  canvas.toBlob((blob) => {
+  // Use an offscreen canvas so the download has a solid background
+  // (the game canvas is transparent — CSS background never appears in toBlob)
+  const offscreen = document.createElement('canvas');
+  offscreen.width = canvas.width;
+  offscreen.height = canvas.height;
+  const offCtx = offscreen.getContext('2d')!;
+  const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--color-background').trim() || '#fafaf5';
+  offCtx.fillStyle = bgColor;
+  offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
+  offCtx.drawImage(canvas, 0, 0);
+
+  offscreen.toBlob((blob) => {
     if (!blob) return;
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

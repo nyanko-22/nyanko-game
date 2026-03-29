@@ -9,7 +9,7 @@ let onSettingsCallback: (() => void) | null = null;
 
 function buildScreen(): HTMLDivElement {
   screen = createScreen('home-screen');
-  screen.style.background = 'var(--color-background)';
+  screen.style.backgroundColor = 'var(--color-background)';
 
   const inner = el('div', { className: 'screen-inner' });
 
