@@ -4,38 +4,15 @@
     All elements in lavender on transparent background. Displayed as no-repeat/cover.
   -->
 
-  <!-- WALKING CAT top-left, facing right (circles + paths only, explicit fill) -->
-  <!-- Body: horizontal circle -->
-  <circle cx="50" cy="72" r="30" fill="#9095c8" opacity="0.40"/>
-  <!-- Head: smaller circle -->
-  <circle cx="94" cy="52" r="20" fill="#9095c8" opacity="0.40"/>
-  <!-- Left ear -->
-  <path d="M 84,36 L 90,18 L 100,36 Z" fill="#9095c8" opacity="0.40"/>
-  <!-- Right ear -->
-  <path d="M 100,36 L 108,18 L 118,36 Z" fill="#9095c8" opacity="0.40"/>
-  <!-- Tail -->
-  <path d="M 22,66 Q -2,54 -6,70 Q -8,82 5,86" fill="none" stroke="#9095c8" stroke-width="8" stroke-linecap="round" opacity="0.40"/>
-  <!-- Front legs -->
-  <path d="M 68,98 L 66,120 Q 66,126 72,126 Q 78,126 78,120 L 76,98 Z" fill="#9095c8" opacity="0.40"/>
-  <path d="M 82,98 L 80,118 Q 80,124 86,124 Q 92,124 92,118 L 90,98 Z" fill="#9095c8" opacity="0.40"/>
-  <!-- Back legs -->
-  <path d="M 24,94 L 22,114 Q 22,120 28,120 Q 34,120 34,114 L 32,94 Z" fill="#9095c8" opacity="0.40"/>
-  <path d="M 38,96 L 36,116 Q 36,122 42,122 Q 48,122 48,116 L 46,96 Z" fill="#9095c8" opacity="0.40"/>
+  <!-- CAT FACE top-left -->
+  <circle cx="75" cy="68" r="28" fill="#9095c8" opacity="0.40"/>
+  <path d="M 52,52 L 58,28 L 68,52 Z" fill="#9095c8" opacity="0.40"/>
+  <path d="M 80,52 L 90,28 L 96,52 Z" fill="#9095c8" opacity="0.40"/>
 
-  <!-- WALKING CAT top-right, facing left (mirrored) -->
-  <circle cx="340" cy="78" r="30" fill="#9095c8" opacity="0.36"/>
-  <circle cx="296" cy="56" r="20" fill="#9095c8" opacity="0.36"/>
-  <!-- Ears (mirrored) -->
-  <path d="M 306,40 L 300,22 L 290,40 Z" fill="#9095c8" opacity="0.36"/>
-  <path d="M 290,40 L 280,22 L 272,40 Z" fill="#9095c8" opacity="0.36"/>
-  <!-- Tail (mirrored) -->
-  <path d="M 368,72 Q 392,60 396,76 Q 398,88 385,92" fill="none" stroke="#9095c8" stroke-width="8" stroke-linecap="round" opacity="0.36"/>
-  <!-- Front legs -->
-  <path d="M 302,104 L 300,124 Q 300,130 306,130 Q 312,130 312,124 L 310,104 Z" fill="#9095c8" opacity="0.36"/>
-  <path d="M 316,104 L 314,122 Q 314,128 320,128 Q 326,128 326,122 L 324,104 Z" fill="#9095c8" opacity="0.36"/>
-  <!-- Back legs -->
-  <path d="M 344,100 L 342,120 Q 342,126 348,126 Q 354,126 354,120 L 352,100 Z" fill="#9095c8" opacity="0.36"/>
-  <path d="M 358,100 L 356,118 Q 356,124 362,124 Q 368,124 368,118 L 366,100 Z" fill="#9095c8" opacity="0.36"/>
+  <!-- CAT FACE top-right (mirrored) -->
+  <circle cx="315" cy="68" r="28" fill="#9095c8" opacity="0.36"/>
+  <path d="M 294,52 L 300,28 L 310,52 Z" fill="#9095c8" opacity="0.36"/>
+  <path d="M 322,52 L 332,28 L 338,52 Z" fill="#9095c8" opacity="0.36"/>
 
   <!-- SITTING CAT bottom-left -->
   <!-- Body -->
@@ -43,16 +20,16 @@
   <!-- Head -->
   <circle cx="70" cy="760" r="22" fill="#9095c8" opacity="0.38"/>
   <!-- Ears -->
-  <path d="M 60,742 L 66,722 L 74,742 Z" fill="#9095c8" opacity="0.38"/>
-  <path d="M 74,742 L 82,722 L 89,742 Z" fill="#9095c8" opacity="0.38"/>
+  <path d="M 52,744 L 58,722 L 68,744 Z" fill="#9095c8" opacity="0.38"/>
+  <path d="M 71,744 L 78,722 L 88,744 Z" fill="#9095c8" opacity="0.38"/>
   <!-- Tail -->
   <path d="M 26,812 Q 6,830 19,842 Q 34,850 50,840" fill="none" stroke="#9095c8" stroke-width="9" stroke-linecap="round" opacity="0.38"/>
 
   <!-- SITTING CAT bottom-right (mirrored) -->
   <circle cx="335" cy="800" r="32" fill="#9095c8" opacity="0.34"/>
   <circle cx="320" cy="760" r="22" fill="#9095c8" opacity="0.34"/>
-  <path d="M 330,742 L 324,722 L 316,742 Z" fill="#9095c8" opacity="0.34"/>
-  <path d="M 316,742 L 308,722 L 300,742 Z" fill="#9095c8" opacity="0.34"/>
+  <path d="M 302,744 L 312,722 L 319,744 Z" fill="#9095c8" opacity="0.34"/>
+  <path d="M 322,744 L 332,722 L 338,744 Z" fill="#9095c8" opacity="0.34"/>
   <path d="M 364,812 Q 384,830 371,842 Q 356,850 340,840" fill="none" stroke="#9095c8" stroke-width="9" stroke-linecap="round" opacity="0.34"/>
 
   <!-- PAW PRINT — left side, mid -->
