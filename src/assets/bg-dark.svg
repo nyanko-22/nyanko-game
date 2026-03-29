@@ -4,33 +4,51 @@
     All elements in lavender on transparent background. Displayed as no-repeat/cover.
   -->
 
-  <!-- CAT FACE top-left -->
-  <circle cx="75" cy="68" r="28" fill="#9095c8" opacity="0.40"/>
-  <path d="M 52,52 L 58,28 L 68,52 Z" fill="#9095c8" opacity="0.40"/>
-  <path d="M 80,52 L 90,28 L 96,52 Z" fill="#9095c8" opacity="0.40"/>
+  <!-- CAT CONSTELLATION: head outline (upper-left) -->
+  <!-- Stars: ear tips, head outline, chin -->
+  <circle cx="46" cy="22" r="3.0" fill="#9095c8" opacity="0.40"/>
+  <circle cx="68" cy="44" r="2.5" fill="#9095c8" opacity="0.36"/>
+  <circle cx="96" cy="38" r="2.5" fill="#9095c8" opacity="0.36"/>
+  <circle cx="112" cy="18" r="3.0" fill="#9095c8" opacity="0.40"/>
+  <circle cx="122" cy="65" r="2.5" fill="#9095c8" opacity="0.36"/>
+  <circle cx="108" cy="94" r="2.5" fill="#9095c8" opacity="0.36"/>
+  <circle cx="78" cy="102" r="2.8" fill="#9095c8" opacity="0.38"/>
+  <circle cx="48" cy="88" r="2.5" fill="#9095c8" opacity="0.36"/>
+  <circle cx="36" cy="60" r="2.5" fill="#9095c8" opacity="0.36"/>
+  <!-- Lines: ears, head outline -->
+  <line x1="46" y1="22" x2="68" y2="44" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.36"/>
+  <line x1="112" y1="18" x2="96" y2="38" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.36"/>
+  <line x1="68" y1="44" x2="96" y2="38" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
+  <line x1="96" y1="38" x2="122" y2="65" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
+  <line x1="122" y1="65" x2="108" y2="94" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
+  <line x1="108" y1="94" x2="78" y2="102" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
+  <line x1="78" y1="102" x2="48" y2="88" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
+  <line x1="48" y1="88" x2="36" y2="60" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
+  <line x1="36" y1="60" x2="68" y2="44" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.34"/>
 
-  <!-- CAT FACE top-right (mirrored) -->
-  <circle cx="315" cy="68" r="28" fill="#9095c8" opacity="0.36"/>
-  <path d="M 294,52 L 300,28 L 310,52 Z" fill="#9095c8" opacity="0.36"/>
-  <path d="M 322,52 L 332,28 L 338,52 Z" fill="#9095c8" opacity="0.36"/>
-
-  <!-- SITTING CAT bottom-left -->
-  <!-- Body -->
-  <circle cx="55" cy="800" r="32" fill="#9095c8" opacity="0.38"/>
-  <!-- Head -->
-  <circle cx="70" cy="760" r="22" fill="#9095c8" opacity="0.38"/>
-  <!-- Ears -->
-  <path d="M 52,744 L 58,722 L 68,744 Z" fill="#9095c8" opacity="0.38"/>
-  <path d="M 71,744 L 78,722 L 88,744 Z" fill="#9095c8" opacity="0.38"/>
-  <!-- Tail -->
-  <path d="M 26,812 Q 6,830 19,842 Q 34,850 50,840" fill="none" stroke="#9095c8" stroke-width="9" stroke-linecap="round" opacity="0.38"/>
-
-  <!-- SITTING CAT bottom-right (mirrored) -->
-  <circle cx="335" cy="800" r="32" fill="#9095c8" opacity="0.34"/>
-  <circle cx="320" cy="760" r="22" fill="#9095c8" opacity="0.34"/>
-  <path d="M 302,744 L 312,722 L 319,744 Z" fill="#9095c8" opacity="0.34"/>
-  <path d="M 322,744 L 332,722 L 338,744 Z" fill="#9095c8" opacity="0.34"/>
-  <path d="M 364,812 Q 384,830 371,842 Q 356,850 340,840" fill="none" stroke="#9095c8" stroke-width="9" stroke-linecap="round" opacity="0.34"/>
+  <!-- CAT CONSTELLATION: sitting cat silhouette (lower-right) -->
+  <!-- Stars: ears, head, body outline, paws, tail -->
+  <circle cx="290" cy="712" r="3.0" fill="#9095c8" opacity="0.36"/>
+  <circle cx="315" cy="708" r="3.0" fill="#9095c8" opacity="0.36"/>
+  <circle cx="303" cy="732" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="296" cy="748" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="333" cy="762" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="338" cy="800" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="318" cy="830" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="275" cy="832" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="262" cy="792" r="2.5" fill="#9095c8" opacity="0.34"/>
+  <circle cx="360" cy="840" r="2.5" fill="#9095c8" opacity="0.30"/>
+  <!-- Lines: ears, body outline, paws, tail -->
+  <line x1="290" y1="712" x2="303" y2="732" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.32"/>
+  <line x1="315" y1="708" x2="303" y2="732" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.32"/>
+  <line x1="303" y1="732" x2="296" y2="748" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="296" y1="748" x2="262" y2="792" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="262" y1="792" x2="275" y2="832" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="275" y1="832" x2="318" y2="830" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="318" y1="830" x2="338" y2="800" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="338" y1="800" x2="333" y2="762" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="333" y1="762" x2="303" y2="732" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.30"/>
+  <line x1="338" y1="800" x2="360" y2="840" stroke="#9095c8" stroke-width="0.9" stroke-dasharray="3,5" opacity="0.28"/>
 
   <!-- PAW PRINT — left side, mid -->
   <circle cx="28" cy="412" r="13" fill="#9095c8" opacity="0.36"/>
