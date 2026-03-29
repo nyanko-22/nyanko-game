@@ -11,6 +11,7 @@ const state: InputState = {
 };
 
 let suppressNextDrop = false;
+let spaceHeld = false;
 
 export function suppressDrop(): void {
   suppressNextDrop = true;
@@ -51,6 +52,14 @@ export function initInput(canvas: HTMLCanvasElement, catRadiusFn: () => number):
     e.preventDefault();
     state.dropped = true;
   }, { passive: false });
+
+  // Debug: hold Space to continuously drop
+  window.addEventListener('keydown', (e) => {
+    if (e.code === 'Space') { e.preventDefault(); spaceHeld = true; }
+  });
+  window.addEventListener('keyup', (e) => {
+    if (e.code === 'Space') spaceHeld = false;
+  });
 }
 
 export function consumeDrop(): boolean {
@@ -68,4 +77,8 @@ export function consumeDrop(): boolean {
 
 export function getCursorX(): number {
   return state.cursorX;
+}
+
+export function isSpaceHeld(): boolean {
+  return spaceHeld;
 }

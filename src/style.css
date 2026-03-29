@@ -124,7 +124,7 @@ html, body {
 }
 
 [data-theme="dark"] .ranking-your-stats {
-  box-shadow: 0 0 16px rgba(129, 212, 250, 0.15), 0 4px 20px rgba(0, 0, 0, 0.4);
+  background: var(--color-surface-container-high);
 }
 
 /* ===== Typography ===== */
@@ -694,40 +694,40 @@ html, body {
 
 /* ===== Ranking Screen ===== */
 .ranking-your-stats {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1.5px solid var(--color-primary);
+  display: flex;
+  align-items: center;
+  background: var(--color-surface-container);
   border-radius: 16px;
-  padding: 16px;
-  margin-top: 12px;
+  padding: 14px 8px;
+  margin: 0 0 4px;
 }
 
-.ranking-your-stats-row {
-  display: flex;
-  justify-content: space-around;
-  gap: 8px;
+.ranking-stats-divider {
+  width: 1px;
+  height: 44px;
+  background: var(--color-outline-variant);
+  flex-shrink: 0;
 }
 
 .ranking-your-stat-block {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex: 1;
 }
 
 .ranking-your-stat-label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 700;
   color: var(--color-outline);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .ranking-your-stat-value {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 800;
   color: var(--color-primary);
 }

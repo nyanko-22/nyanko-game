@@ -31,11 +31,15 @@ export async function loadRanking(): Promise<void> {
 
   try {
     cachedScores = await fetchTopScores(MAX_RANKING_ENTRIES);
+    // If no currentPlayer set (e.g. from home screen), load high score from localStorage
+    if (!personalHighScore) {
+      const saved = localStorage.getItem('nyanko-game-highscore');
+      if (saved) personalHighScore = parseInt(saved, 10) || 0;
+    }
     // Start loading thumbnails
     for (const entry of cachedScores) {
       if (!thumbnailCache.has(entry.screenshotUrl)) {
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         img.src = entry.screenshotUrl;
         thumbnailCache.set(entry.screenshotUrl, img);
       }

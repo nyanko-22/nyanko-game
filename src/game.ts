@@ -1,7 +1,7 @@
 import { CATS, DROP_Y, DROP_COOLDOWN_MS, MAX_DROP_LEVEL, DEATH_LINE_Y, DEATH_GRACE_FRAMES, SCREENSHOT_QUALITY } from './constants';
 import { createCat } from './cats';
 import { initPhysics, stepPhysics, addBody, getAllBodies, onMerge, clearCats, type MergeEvent } from './physics';
-import { initInput, consumeDrop, getCursorX } from './input';
+import { initInput, consumeDrop, getCursorX, isSpaceHeld } from './input';
 import { createCanvas, render, type GameState } from './renderer';
 import { showSettingsScreen, hideSettingsScreen } from './screens/settings';
 import { showHomeScreen, hideHomeScreen } from './screens/home';
@@ -195,8 +195,8 @@ async function handleNicknameSubmit(nickname: string): Promise<void> {
   submitting = false;
   gameOverScreenshotBlob = null;
   state = 'ranking';
-  setCurrentPlayer(nickname, getScore(), getHighScore());
   resetRanking();
+  setCurrentPlayer(nickname, getScore(), getHighScore());
   loadRanking();
   showRankingScreen(getRankingData(), {
     onBack: () => {
@@ -255,7 +255,7 @@ function gameLoop(timestamp: number): void {
 
   // Playing state
   if (!settingsOpen) {
-    const dropped = consumeDrop();
+    const dropped = consumeDrop() || isSpaceHeld();
     const now = timestamp;
 
     if (dropped && now - lastDropTime > DROP_COOLDOWN_MS) {

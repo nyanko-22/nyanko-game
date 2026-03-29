@@ -53,7 +53,7 @@ function buildScreen(): HTMLDivElement {
   playAgainBtn.addEventListener('click', () => onPlayAgainCallback?.());
   footer.appendChild(playAgainBtn);
 
-  inner.append(header, listEl, yourStatsEl, footer);
+  inner.append(header, yourStatsEl, listEl, footer);
   screen.appendChild(inner);
 
   return screen;
@@ -61,37 +61,50 @@ function buildScreen(): HTMLDivElement {
 
 function renderYourStats(data: RankingRenderData): void {
   if (!yourStatsEl) return;
-  if (!data.currentPlayer) {
+  const highScore = data.personalHighScore ?? 0;
+  if (!highScore) {
     yourStatsEl.style.display = 'none';
     return;
   }
-  yourStatsEl.style.display = 'block';
+  yourStatsEl.style.display = 'flex';
   clearEl(yourStatsEl);
 
-  const { score } = data.currentPlayer;
   const rank = data.loading
     ? null
-    : data.scores.filter(s => s.score > score).length + 1;
+    : data.scores.filter(s => s.score > highScore).length + 1;
 
   const rankStr = rank !== null ? `#${rank}` : '---';
-  const highStr = data.personalHighScore ? `${data.personalHighScore.toLocaleString()} pts` : '---';
-
-  const row = el('div', { className: 'ranking-your-stats-row' });
+  const highStr = highScore.toLocaleString();
 
   const rankBlock = el('div', { className: 'ranking-your-stat-block' });
   rankBlock.append(
-    el('div', { className: 'ranking-your-stat-label', textContent: 'Your Rank' }),
+    el('div', { className: 'ranking-your-stat-label', textContent: 'YOUR RANK' }),
     el('div', { className: 'ranking-your-stat-value', textContent: rankStr }),
   );
 
   const bestBlock = el('div', { className: 'ranking-your-stat-block' });
   bestBlock.append(
-    el('div', { className: 'ranking-your-stat-label', textContent: 'High Score' }),
+    el('div', { className: 'ranking-your-stat-label', textContent: 'HIGH SCORE' }),
     el('div', { className: 'ranking-your-stat-value', textContent: highStr }),
   );
 
-  row.append(rankBlock, bestBlock);
-  yourStatsEl.appendChild(row);
+  if (data.currentPlayer) {
+    const scoreStr = data.currentPlayer.score.toLocaleString();
+    const scoreBlock = el('div', { className: 'ranking-your-stat-block' });
+    scoreBlock.append(
+      el('div', { className: 'ranking-your-stat-label', textContent: 'SCORE' }),
+      el('div', { className: 'ranking-your-stat-value', textContent: scoreStr }),
+    );
+    yourStatsEl.append(
+      rankBlock,
+      el('div', { className: 'ranking-stats-divider' }),
+      scoreBlock,
+      el('div', { className: 'ranking-stats-divider' }),
+      bestBlock,
+    );
+  } else {
+    yourStatsEl.append(rankBlock, el('div', { className: 'ranking-stats-divider' }), bestBlock);
+  }
 }
 
 function renderList(data: RankingRenderData): void {
@@ -142,6 +155,13 @@ function renderList(data: RankingRenderData): void {
     if (entry.screenshotUrl) {
       const thumbBtn = el('button', { className: 'ranking-thumb-btn btn-icon' });
       thumbBtn.appendChild(materialIcon('photo'));
+      // touchend handles mobile (preventDefault stops synthesized click double-fire)
+      thumbBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        showScreenshotModal(entry.screenshotUrl);
+      });
+      // click handles desktop
       thumbBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         showScreenshotModal(entry.screenshotUrl);
@@ -156,9 +176,9 @@ function renderList(data: RankingRenderData): void {
 function ensureModal(): void {
   if (modalEl) return;
   modalEl = el('div', { className: 'screenshot-modal' });
-  modalEl.addEventListener('click', () => {
-    if (modalEl) modalEl.style.display = 'none';
-  });
+  const closeModal = () => { if (modalEl) modalEl.style.display = 'none'; };
+  modalEl.addEventListener('click', closeModal);
+  modalEl.addEventListener('touchend', (e) => { e.preventDefault(); closeModal(); });
   // Mount directly on body to avoid stacking context and pointer-events inheritance issues
   document.body.appendChild(modalEl);
 }
