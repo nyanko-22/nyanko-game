@@ -152,9 +152,10 @@ function takeScreenshot(): void {
 
   // Use an offscreen canvas to composite background + SVG pattern + game canvas
   // (the game canvas is transparent — CSS background never appears in toBlob)
+  const MARGIN = 48;
   const offscreen = document.createElement('canvas');
-  offscreen.width = canvas.width;
-  offscreen.height = canvas.height;
+  offscreen.width = canvas.width + MARGIN * 2;
+  offscreen.height = canvas.height + MARGIN * 2;
   const offCtx = offscreen.getContext('2d')!;
 
   function downloadOffscreen(): void {
@@ -186,11 +187,11 @@ function takeScreenshot(): void {
       const pat = offCtx.createPattern(bgImg, 'repeat');
       if (pat) { offCtx.fillStyle = pat; offCtx.fillRect(0, 0, offscreen.width, offscreen.height); }
     }
-    offCtx.drawImage(canvas, 0, 0);
+    offCtx.drawImage(canvas, MARGIN, MARGIN);
     downloadOffscreen();
   };
   bgImg.onerror = () => {
-    offCtx.drawImage(canvas, 0, 0);
+    offCtx.drawImage(canvas, MARGIN, MARGIN);
     downloadOffscreen();
   };
   bgImg.src = getBgPatternUrl();
